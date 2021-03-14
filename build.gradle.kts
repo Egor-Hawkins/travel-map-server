@@ -19,10 +19,6 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-security")
-//    implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
-//    implementation("org.springframework.boot:spring-boot-starter-jwt")
-//    implementation("org.springframework.security:spring-security-config")
-//    implementation("org.springframework.security.oauth:spring-security-oauth2")
     implementation("org.springframework.security:spring-security-test")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml")
@@ -30,8 +26,9 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("com.auth0:java-jwt:3.14.0")
 //	developmentOnly("org.springframework.boot:spring-boot-devtools")
-    runtimeOnly("org.postgresql:postgresql")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    implementation("org.liquibase:liquibase-core")
+	runtimeOnly("org.postgresql:postgresql")
+	testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 
 tasks.withType<KotlinCompile> {
