@@ -9,7 +9,7 @@
         <dbms type="postgresql"/>
     </preConditions>
 
-    <changeSet id="0" author="">
+    <changeSet id="v0" author="">
         <tagDatabase tag="db_init"/>
     </changeSet>
 

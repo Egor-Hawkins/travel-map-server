@@ -6,9 +6,14 @@
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
 
-    <include file="/db/changelog/changes/v1.1/insert-countries.sql"/>
-
     <changeSet id="v1.1-1" author="">
+        <sqlFile path="insert-countries.sql" relativeToChangelogFile="true"/>
+        <rollback>
+            <sqlFile path="clear-countries.sql" relativeToChangelogFile="true"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="v1.1" author="">
         <tagDatabase tag="fill_countries_table"/>
     </changeSet>
 
