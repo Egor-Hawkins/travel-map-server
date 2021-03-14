@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+
+    <changeSet id="v1.0-1" author="">
+        <sqlFile path="create-countries-table.sql" relativeToChangelogFile="true"/>
+        <rollback>
+            <sqlFile path="drop-countries-table.sql" relativeToChangelogFile="true"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="v1.0-2" author="">
+        <sqlFile path="create-cities-table.sql" relativeToChangelogFile="true"/>
+        <rollback>
+            <sqlFile path="drop-cities-table.sql" relativeToChangelogFile="true"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="v1.0-3" author="">
+        <sqlFile path="create-users-table.sql" relativeToChangelogFile="true"/>
+        <rollback>
+            <sqlFile path="drop-users-table.sql" relativeToChangelogFile="true"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="v1.0-4" author="">
+        <sqlFile path="create-authorities-table.sql" relativeToChangelogFile="true"/>
+        <rollback>
+            <sqlFile path="drop-authorities-table.sql" relativeToChangelogFile="true"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="v1.0" author="">
+        <tagDatabase tag="create basic tables"/>
+    </changeSet>
+
+
+</databaseChangeLog>
