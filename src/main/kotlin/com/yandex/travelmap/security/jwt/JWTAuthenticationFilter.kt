@@ -13,7 +13,6 @@ import javax.servlet.http.Cookie
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
-const val EXPIRATION_TIME = 1209600000 // 2 weeks in ms
 const val AUTH_COOKIE = "AUTH_COOKIE"
 
 
@@ -22,7 +21,7 @@ class JWTAuthenticationFilter(authenticationManager: AuthenticationManager, priv
     private val jwtSecret: String by lazy {
         System.getenv("JWT_SECRET") ?: config?.secret ?: "default_JWT_secret"
     }
-    private val expirationTime = config?.expirationTime!!
+    private val expirationTime = config?.expirationTime ?: 1209600000 // 2 weeks in ms
 
     override fun successfulAuthentication(
         request: HttpServletRequest?,
