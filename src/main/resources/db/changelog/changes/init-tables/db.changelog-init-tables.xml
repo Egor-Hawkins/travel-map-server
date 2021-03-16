@@ -5,16 +5,11 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-
-    <changeSet id="v1.1-1" author="">
-        <sqlFile path="insert-countries.sql" relativeToChangelogFile="true"/>
+    <changeSet id="create_basic_tables_and_fill_countries" author="salkaevruslan">
+        <sqlFile path="create-tables.sql" relativeToChangelogFile="true"/>
         <rollback>
-            <sqlFile path="clear-countries.sql" relativeToChangelogFile="true"/>
+            <sqlFile path="drop-tables.sql" relativeToChangelogFile="true"/>
         </rollback>
-    </changeSet>
-
-    <changeSet id="v1.1" author="">
-        <tagDatabase tag="fill_countries_table"/>
     </changeSet>
 
 

@@ -1,4 +1,45 @@
-DELETE FROM countries WHERE (iso, name)  IN
+CREATE TABLE countries (
+    iso CHAR(2) PRIMARY KEY,
+    name VARCHAR(50) UNIQUE
+);
+
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    email VARCHAR(50) NOT NULL UNIQUE,
+    username VARCHAR(50) NOT NULL,
+    password VARCHAR(50) NOT NULL,
+    enabled BOOLEAN NOT NULL
+);
+
+CREATE TABLE cities (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(80),
+    country_code CHAR(2) REFERENCES countries(iso),
+    latitude NUMERIC(5),
+    longitude NUMERIC(5)
+);
+
+CREATE TABLE authorities (
+    username VARCHAR(50) NOT NULL,
+    authority VARCHAR(50) NOT NULL,
+    CONSTRAINT fk_authorities_users FOREIGN KEY(username) REFERENCES users(email)
+);
+
+CREATE UNIQUE INDEX ix_auth_users ON authorities (username, authority);
+
+CREATE TABLE city_visit (
+    user_id INTEGER REFERENCES users(id),
+    city_id INTEGER REFERENCES cities(id),
+    PRIMARY KEY(user_id, city_id)
+);
+
+CREATE TABLE country_visit (
+    user_id INTEGER REFERENCES users(id),
+    country_code CHAR(2) REFERENCES countries(iso),
+    PRIMARY KEY(user_id, country_code)
+);
+
+INSERT INTO countries (iso, name) VALUES
 ('AB', 'Abkhazia'),
 ('AD', 'Andorra'),
 ('AE', 'United Arab Emirates'),
@@ -230,3 +271,4 @@ DELETE FROM countries WHERE (iso, name)  IN
 ('ZA', 'South Africa'),
 ('ZM', 'Zambia'),
 ('ZW', 'Zimbabwe');
+

@@ -9,12 +9,11 @@
         <dbms type="postgresql"/>
     </preConditions>
 
-    <changeSet id="v0" author="">
+    <changeSet id="create_initial_db_schema" author="salkaevruslan">
         <tagDatabase tag="db_init"/>
     </changeSet>
 
-    <include file="/db/changelog/changes/v1.0/db.changelog-v1.0.xml"/>
-    <include file="/db/changelog/changes/v1.1/db.changelog-v1.1.xml"/>
+    <include file="/db/changelog/changes/init-tables/db.changelog-init-tables.xml"/>
 
 
 </databaseChangeLog>
