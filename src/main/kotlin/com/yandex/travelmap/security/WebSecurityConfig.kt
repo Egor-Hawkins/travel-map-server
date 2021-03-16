@@ -1,8 +1,10 @@
 package com.yandex.travelmap.security
 
+import com.yandex.travelmap.CustomConfig
 import com.yandex.travelmap.security.jwt.JWTAuthenticationFilter
 import com.yandex.travelmap.security.jwt.JWTAuthorizationFilter
 import com.yandex.travelmap.service.UserService
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
@@ -19,19 +21,28 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 class WebSecurityConfig(private val userDetailsService: UserService) : WebSecurityConfigurerAdapter() {
+    @Autowired
+    val config: CustomConfig? = null
 
     override fun configure(http: HttpSecurity?) {
         http {
             csrf { disable() }
             cors { disable() }
-            httpBasic { }
+            httpBasic {
+
+            }
             authorizeRequests {
                 authorize("/ping", permitAll)
                 authorize("/api/auth/**", permitAll)
                 authorize("/api/**", authenticated)
             }
-            addFilterBefore<UsernamePasswordAuthenticationFilter>(JWTAuthorizationFilter(authenticationManager()))
-            addFilterBefore<JWTAuthorizationFilter>(JWTAuthenticationFilter(authenticationManager()))
+            addFilterBefore<UsernamePasswordAuthenticationFilter>(
+                JWTAuthorizationFilter(
+                    authenticationManager(),
+                    config
+                )
+            )
+            addFilterBefore<JWTAuthorizationFilter>(JWTAuthenticationFilter(authenticationManager(), config))
             sessionManagement {
                 sessionCreationPolicy = SessionCreationPolicy.STATELESS
             }
