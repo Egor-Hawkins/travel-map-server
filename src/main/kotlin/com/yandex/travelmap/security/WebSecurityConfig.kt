@@ -36,6 +36,7 @@ class WebSecurityConfig(private val userDetailsService: UserService) : WebSecuri
                 authorize("/api/auth/**", permitAll)
                 authorize("/api/**", authenticated)
             }
+
             addFilterBefore<UsernamePasswordAuthenticationFilter>(
                 JWTAuthorizationFilter(
                     authenticationManager(),
@@ -50,12 +51,7 @@ class WebSecurityConfig(private val userDetailsService: UserService) : WebSecuri
     }
 
     override fun configure(auth: AuthenticationManagerBuilder) {
-        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder())
-    }
-
-    @Bean
-    fun passwordEncoder(): PasswordEncoder {
-        return BCryptPasswordEncoder()
+        auth.userDetailsService(userDetailsService).passwordEncoder(BCryptPasswordEncoder())
     }
 }
 
