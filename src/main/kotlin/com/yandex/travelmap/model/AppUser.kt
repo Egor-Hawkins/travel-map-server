@@ -20,9 +20,6 @@ data class AppUser(
     @Column(unique = true, nullable = false)
     private var email: String = "",
 
-    @Transient
-    private var authorities: MutableCollection<out GrantedAuthority> = HashSet(),
-
     @Column(name = "non_expired", nullable = false)
     private val nonExpired: Boolean = true,
     @Column(name = "non_locked", nullable = false)
@@ -47,11 +44,12 @@ data class AppUser(
         inverseJoinColumns = [JoinColumn(name = "country_id")]
     )
     val visitedCountries: Set<Country> = HashSet(),
-
-//    @OneToOne()
-//    val
 ) : UserDetails {
-    override fun getAuthorities(): MutableCollection<out GrantedAuthority> = authorities
+    override fun getAuthorities(): MutableCollection<out GrantedAuthority> = mutableListOf(
+        GrantedAuthority {
+            "user"
+        }
+    )
 
     override fun getPassword(): String = password
 
