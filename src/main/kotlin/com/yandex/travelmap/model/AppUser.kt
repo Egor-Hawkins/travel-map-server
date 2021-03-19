@@ -1,20 +1,62 @@
 package com.yandex.travelmap.model
 
+import org.springframework.security.core.GrantedAuthority
+import org.springframework.security.core.userdetails.UserDetails
 import javax.persistence.*
 
 @Entity
 @Table(name = "users")
-class AppUser {
+data class AppUser(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Long? = null
+    var id: Long = 0,
 
-    @Column(unique = true)
-    var username: String? = null
-    var password: String? = null
+    @Column(unique = true, nullable = false)
+    private var username: String = "",
 
-    @Column(unique = true)
-    var email: String? = null
+    @Column(nullable = false)
+    private var password: String = "",
 
-    var enabled: Boolean? = null
+    @Column(unique = true, nullable = false)
+    private var email: String = "",
+
+    @Transient
+    private var authorities: MutableCollection<out GrantedAuthority> = HashSet(),
+
+    @Column(name = "non_expired", nullable = false)
+    private val nonExpired: Boolean = true,
+    @Column(name = "non_locked", nullable = false)
+    private val nonLocked: Boolean = true,
+    @Column(nullable = false)
+    private val enabled: Boolean = true,
+    @Column(name = "credentials_non_expired", nullable = false)
+    private val credentialsNonExpired: Boolean = true,
+
+    @ManyToMany
+    @JoinTable(
+        name = "city_visit",
+        joinColumns = [JoinColumn(name = "user_id")],
+        inverseJoinColumns = [JoinColumn(name = "city_id")]
+    )
+    val visitedCities: Set<City> = HashSet(),
+
+    @ManyToMany
+    @JoinTable(
+        name = "country_visit",
+        joinColumns = [JoinColumn(name = "user_id")],
+        inverseJoinColumns = [JoinColumn(name = "country_id")]
+    )
+    val visitedCountries: Set<Country> = HashSet()
+) : UserDetails {
+    override fun getAuthorities(): MutableCollection<out GrantedAuthority> = authorities
+
+    override fun getPassword(): String = password
+
+    override fun getUsername(): String = username
+    override fun isAccountNonExpired(): Boolean = nonExpired
+
+    override fun isAccountNonLocked(): Boolean = nonLocked
+    override fun isCredentialsNonExpired(): Boolean = credentialsNonExpired
+
+    override fun isEnabled(): Boolean = enabled
 }
