@@ -3,7 +3,7 @@ package com.yandex.travelmap.security
 import com.yandex.travelmap.CustomConfig
 import com.yandex.travelmap.security.jwt.JWTAuthenticationFilter
 import com.yandex.travelmap.security.jwt.JWTAuthorizationFilter
-import com.yandex.travelmap.service.UserService
+import com.yandex.travelmap.service.UserDetailsServiceImpl
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -20,7 +20,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
-class WebSecurityConfig(private val userDetailsService: UserService) : WebSecurityConfigurerAdapter() {
+class WebSecurityConfig(private val userDetailsService: UserDetailsServiceImpl) : WebSecurityConfigurerAdapter() {
     @Autowired
     val config: CustomConfig? = null
 

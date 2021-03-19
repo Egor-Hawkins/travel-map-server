@@ -46,7 +46,10 @@ data class AppUser(
         joinColumns = [JoinColumn(name = "user_id")],
         inverseJoinColumns = [JoinColumn(name = "country_id")]
     )
-    val visitedCountries: Set<Country> = HashSet()
+    val visitedCountries: Set<Country> = HashSet(),
+
+//    @OneToOne()
+//    val
 ) : UserDetails {
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> = authorities
 
