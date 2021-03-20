@@ -1,6 +1,7 @@
 package com.yandex.travelmap.security
 
 import com.yandex.travelmap.CustomConfig
+import com.yandex.travelmap.security.jwt.AUTH_COOKIE
 import com.yandex.travelmap.security.jwt.JWTAuthenticationFilter
 import com.yandex.travelmap.security.jwt.JWTAuthorizationFilter
 import com.yandex.travelmap.service.UserService
@@ -67,7 +68,6 @@ class WebSecurityConfig(
                 authenticationSuccessHandler = customAuthenticationSuccessHandler
                 authenticationFailureHandler = customAuthenticationFailureHandler
             }
-
             authenticationFilter()?.let {
                 addFilterBefore<UsernamePasswordAuthenticationFilter>(
                     it
@@ -80,6 +80,10 @@ class WebSecurityConfig(
                     userDetailsService
                 )
             )
+            logout {
+               logoutUrl = "/logout"
+                deleteCookies(AUTH_COOKIE)
+            }
             sessionManagement {
                 sessionCreationPolicy = SessionCreationPolicy.STATELESS
             }
