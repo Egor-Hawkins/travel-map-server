@@ -40,7 +40,6 @@ class JWTAuthenticationFilter(
             .withSubject(user.username)
             .withExpiresAt(Date(System.currentTimeMillis() + expirationTime))
             .sign(Algorithm.HMAC512(jwtSecret))
-        userService.updateToken(user.username, token)
         response.addCookie(Cookie(AUTH_COOKIE, token))
         chain.doFilter(request, response)
     }

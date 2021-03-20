@@ -103,7 +103,7 @@ class WebSecurityConfig(
     }
 
 
-    //Idk why it doesn't work without this, Ill fix soon
+    //Idk why it doesn't work without this, Ill fix it soon
     @Component
     class CustomAuthenticationSuccessHandler : AuthenticationSuccessHandler {
         override fun onAuthenticationSuccess(
