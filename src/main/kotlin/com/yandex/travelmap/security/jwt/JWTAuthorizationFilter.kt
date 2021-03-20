@@ -3,6 +3,7 @@ package com.yandex.travelmap.security.jwt
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.yandex.travelmap.CustomConfig
+import com.yandex.travelmap.service.UserService
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
@@ -12,7 +13,11 @@ import javax.servlet.FilterChain
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
-class JWTAuthorizationFilter(authenticationManager: AuthenticationManager, private val config: CustomConfig?) :
+class JWTAuthorizationFilter(
+    authenticationManager: AuthenticationManager,
+    private val config: CustomConfig?,
+    private val userService: UserService
+) :
     BasicAuthenticationFilter(authenticationManager) {
     private val jwtSecret: String by lazy {
         System.getenv("JWT_SECRET") ?: config?.secret ?: "default_JWT_secret"
@@ -25,19 +30,22 @@ class JWTAuthorizationFilter(authenticationManager: AuthenticationManager, priva
             chain.doFilter(request, response)
             return
         }
-        val authenticationToken = getAuthenticationToken(cookie.value)
-        SecurityContextHolder.getContext().authentication = authenticationToken
+        val token = cookie.value
+        val username = getAuthenticationToken(token)
+        val savedToken = username?.let { userService.findByName(it)?.token }
+        if (token == savedToken) {
+            SecurityContextHolder.getContext().authentication =
+                UsernamePasswordAuthenticationToken(username, null, listOf())
+        }
         chain.doFilter(request, response)
     }
 
-    private fun getAuthenticationToken(token: String): UsernamePasswordAuthenticationToken? {
+    private fun getAuthenticationToken(token: String): String? {
 
         // Parse and verify the provided token.
-        val parsedToken = JWT.require(Algorithm.HMAC512(jwtSecret))
+        return JWT.require(Algorithm.HMAC512(jwtSecret))
             .build()
             .verify(token)
             .subject ?: return null
-
-        return UsernamePasswordAuthenticationToken(parsedToken, null, listOf())
     }
 }

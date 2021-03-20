@@ -17,4 +17,6 @@ class AppUser {
     var email: String? = null
 
     var enabled: Boolean? = null
+
+    var token:  String? = null
 }

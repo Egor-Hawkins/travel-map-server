@@ -39,4 +39,12 @@ class UserService(
     fun findByName(username: String): AppUser? {
         return userRepository.findByUsername(username)
     }
+
+    fun updateToken(username: String, token: String) {
+        val appUser: AppUser? = userRepository.findByUsername(username)
+        if (appUser != null) {
+            appUser.token = token
+            userRepository.save(appUser)
+        }
+    }
 }

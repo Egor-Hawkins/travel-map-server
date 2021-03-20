@@ -3,6 +3,7 @@ package com.yandex.travelmap.security.jwt
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.yandex.travelmap.CustomConfig
+import com.yandex.travelmap.service.UserService
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.userdetails.User
@@ -16,7 +17,11 @@ import javax.servlet.http.HttpServletResponse
 const val AUTH_COOKIE = "AUTH_COOKIE"
 
 
-class JWTAuthenticationFilter(authenticationManager: AuthenticationManager, private val config: CustomConfig?) :
+class JWTAuthenticationFilter(
+    authenticationManager: AuthenticationManager,
+    private val config: CustomConfig?,
+    private val userService: UserService
+) :
     UsernamePasswordAuthenticationFilter(authenticationManager) {
     private val jwtSecret: String by lazy {
         System.getenv("JWT_SECRET") ?: config?.secret ?: "default_JWT_secret"
@@ -35,6 +40,7 @@ class JWTAuthenticationFilter(authenticationManager: AuthenticationManager, priv
             .withSubject(user.username)
             .withExpiresAt(Date(System.currentTimeMillis() + expirationTime))
             .sign(Algorithm.HMAC512(jwtSecret))
+        userService.updateToken(user.username, token)
         response.addCookie(Cookie(AUTH_COOKIE, token))
         chain.doFilter(request, response)
     }

@@ -7,7 +7,7 @@
 
     <changeSet id="add_taken_column_to_users_table" author="salkaevruslan">
         <addColumn tableName="users">
-            <column name="token" type="varchar(100)"/>
+            <column name="token" type="varchar(255)"/>
         </addColumn>
     </changeSet>
 

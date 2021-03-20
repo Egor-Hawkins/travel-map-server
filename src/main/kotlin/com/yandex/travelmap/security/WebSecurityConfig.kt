@@ -44,7 +44,7 @@ class WebSecurityConfig(
 
     @Bean
     fun authenticationFilter(): JWTAuthenticationFilter? {
-        val authenticationFilter = JWTAuthenticationFilter(authenticationManager(), config)
+        val authenticationFilter = JWTAuthenticationFilter(authenticationManager(), config, userDetailsService)
         authenticationFilter.setRequiresAuthenticationRequestMatcher(AntPathRequestMatcher("/login", "POST"))
         authenticationFilter.setAuthenticationManager(authenticationManagerBean())
         return authenticationFilter
@@ -76,7 +76,8 @@ class WebSecurityConfig(
             addFilterBefore<JWTAuthorizationFilter>(
                 JWTAuthorizationFilter(
                     authenticationManager(),
-                    config
+                    config,
+                    userDetailsService
                 )
             )
             sessionManagement {
