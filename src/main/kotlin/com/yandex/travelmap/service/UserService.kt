@@ -23,16 +23,20 @@ class UserService(
     fun registerUser(appUser: AppUser): String {
         val emailExists = (appUser.email?.let { userRepository.findByEmail(it) } != null)
         if (emailExists) {
-            throw  IllegalStateException("User with his email already exists")
+            return "User with his email already exists"
         }
         val usernameExists = (appUser.username?.let { userRepository.findByUsername(it) } != null)
         if (usernameExists) {
-            throw  IllegalStateException("User with his name already exists")
+            return "User with his name already exists"
         }
         val encodedPassword: String = passwordEncoder.encode(appUser.password)
         appUser.password = encodedPassword
         appUser.enabled = true //TODO send confirmation?
         userRepository.save(appUser)
         return "Registered successfully"
+    }
+
+    fun findByName(username: String): AppUser? {
+        return userRepository.findByUsername(username)
     }
 }

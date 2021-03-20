@@ -1,11 +1,9 @@
 package com.yandex.travelmap.controller
 
+import com.yandex.travelmap.dto.RegistrationRequest
 import org.springframework.web.bind.annotation.RestController
-import com.yandex.travelmap.service.RegistrationRequest
 import com.yandex.travelmap.service.RegistrationService
-
 import org.springframework.web.bind.annotation.RequestBody
-
 import org.springframework.web.bind.annotation.PostMapping
 
 

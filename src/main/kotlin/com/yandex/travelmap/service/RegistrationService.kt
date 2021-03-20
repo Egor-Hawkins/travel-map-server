@@ -1,11 +1,10 @@
 package com.yandex.travelmap.service
 
+import com.yandex.travelmap.dto.RegistrationRequest
 import com.yandex.travelmap.model.AppUser
 import com.yandex.travelmap.util.EmailValidator
 import org.springframework.stereotype.Service
 import java.lang.IllegalStateException
-
-data class RegistrationRequest(val email: String, val username: String, val password: String) //TODO???
 
 @Service
 class RegistrationService(
@@ -17,7 +16,7 @@ class RegistrationService(
         val isEmailValid: Boolean = emailValidator.validate(registrationRequest.email)
 
         if (!isEmailValid) {
-            throw IllegalStateException("email not valid")
+            return "email not valid"
         }
         val newAppUser = AppUser()
         newAppUser.email = registrationRequest.email
