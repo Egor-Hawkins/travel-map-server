@@ -8,7 +8,6 @@ import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
-import java.lang.IllegalStateException
 
 @Service
 class UserService(
@@ -40,7 +39,7 @@ class UserService(
         return userRepository.findByUsername(username)
     }
 
-    fun updateToken(username: String, token: String) {
+    fun updateToken(username: String, token: String?) {
         val appUser: AppUser? = userRepository.findByUsername(username)
         if (appUser != null) {
             appUser.token = token

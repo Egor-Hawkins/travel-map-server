@@ -32,8 +32,11 @@ class JWTAuthorizationFilter(
         }
         val token = cookie.value
         val username = getAuthenticationToken(token)
-        SecurityContextHolder.getContext().authentication =
-            UsernamePasswordAuthenticationToken(username, null, listOf())
+        val savedToken = username?.let { userService.findByName(it)?.token }
+        if (token == savedToken && savedToken != null) {
+            SecurityContextHolder.getContext().authentication =
+                UsernamePasswordAuthenticationToken(username, null, listOf())
+        }
         chain.doFilter(request, response)
     }
 

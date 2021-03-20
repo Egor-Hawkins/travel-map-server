@@ -1,5 +1,7 @@
 package com.yandex.travelmap.security
 
+import com.auth0.jwt.JWT
+import com.auth0.jwt.algorithms.Algorithm
 import com.yandex.travelmap.CustomConfig
 import com.yandex.travelmap.security.jwt.AUTH_COOKIE
 import com.yandex.travelmap.security.jwt.JWTAuthenticationFilter
@@ -27,6 +29,8 @@ import javax.servlet.http.HttpServletResponse
 
 import javax.servlet.http.HttpServletRequest
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler
+import org.springframework.web.util.WebUtils
 
 
 @Configuration
@@ -36,12 +40,6 @@ class WebSecurityConfig(
 ) : WebSecurityConfigurerAdapter() {
     @Autowired
     val config: CustomConfig? = null
-
-    @Autowired
-    val customAuthenticationSuccessHandler: CustomAuthenticationSuccessHandler? = null
-
-    @Autowired
-    val customAuthenticationFailureHandler: CustomAuthenticationFailureHandler? = null
 
     @Bean
     fun authenticationFilter(): JWTAuthenticationFilter? {
@@ -65,8 +63,19 @@ class WebSecurityConfig(
             }
             formLogin {
                 loginProcessingUrl = "/login"
-                authenticationSuccessHandler = customAuthenticationSuccessHandler
-                authenticationFailureHandler = customAuthenticationFailureHandler
+                authenticationSuccessHandler = AuthenticationSuccessHandler() { request: HttpServletRequest,
+                                                                                response: HttpServletResponse,
+                                                                                authentication: Authentication ->
+                    response.status = HttpServletResponse.SC_OK
+                    response.writer.println("You are logged in")
+
+                }
+                authenticationFailureHandler = AuthenticationFailureHandler() { request: HttpServletRequest?,
+                                                                                response: HttpServletResponse?,
+                                                                                authenticationException: AuthenticationException? ->
+                    response?.status = HttpServletResponse.SC_OK
+                    response?.writer?.println("Failed to log in")
+                }
             }
             authenticationFilter()?.let {
                 addFilterBefore<UsernamePasswordAuthenticationFilter>(
@@ -81,8 +90,28 @@ class WebSecurityConfig(
                 )
             )
             logout {
-               logoutUrl = "/logout"
-                deleteCookies(AUTH_COOKIE)
+                logoutUrl = "/logout"
+                logoutSuccessHandler = LogoutSuccessHandler() { request: HttpServletRequest?,
+                                                                response: HttpServletResponse?,
+                                                                authentication: Authentication? ->
+                    response?.writer?.println("You are logged out")
+                    val cookie = request?.let { WebUtils.getCookie(it, AUTH_COOKIE) }
+                    val jwtSecret: String by lazy {
+                        System.getenv("JWT_SECRET") ?: config?.secret ?: "default_JWT_secret"
+                    }
+                    println(jwtSecret)
+                    if (cookie != null && cookie.value != null && cookie.value.trim().isNotEmpty()) {
+                        val token = cookie.value
+                        println(token)
+                        val username = JWT.require(Algorithm.HMAC512(jwtSecret))
+                            .build()
+                            .verify(token)
+                            .subject ?: null
+                        if (username != null) {
+                            userDetailsService.updateToken(username, null)
+                        }
+                    }
+                }
             }
             sessionManagement {
                 sessionCreationPolicy = SessionCreationPolicy.STATELESS
@@ -99,29 +128,6 @@ class WebSecurityConfig(
         @Bean
         fun passwordEncoder(): PasswordEncoder {
             return BCryptPasswordEncoder()
-        }
-    }
-
-
-    //Idk why it doesn't work without this, Ill fix it soon
-    @Component
-    class CustomAuthenticationSuccessHandler : AuthenticationSuccessHandler {
-        override fun onAuthenticationSuccess(
-            request: HttpServletRequest,
-            response: HttpServletResponse, authentication: Authentication
-        ) {
-            response.status = HttpServletResponse.SC_OK
-        }
-    }
-
-    @Component
-    class CustomAuthenticationFailureHandler : AuthenticationFailureHandler {
-        override fun onAuthenticationFailure(
-            request: HttpServletRequest?,
-            response: HttpServletResponse?,
-            exception: AuthenticationException?
-        ) {
-            response?.status = HttpServletResponse.SC_OK
         }
     }
 }
