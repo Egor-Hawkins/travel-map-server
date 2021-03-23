@@ -12,17 +12,15 @@ import java.lang.IllegalStateException
 class RegistrationController(private val registrationService: RegistrationService) {
 
     @PostMapping("/registration")
-    fun register(@RequestBody request: RegistrationRequest?): String? {
-        return request?.let {
-            return try {
-                if(registrationService.register(it)) {
-                    "Registered successfully"
-                } else {
-                    "Registration failed: something went wrong"
-                }
-            } catch (e: IllegalStateException) {
-                "Registration failed: ${e.message}"
+    fun register(@RequestBody request: RegistrationRequest): String {
+        return try {
+            if (registrationService.register(request)) {
+                "Registered successfully"
+            } else {
+                "Registration failed: something went wrong"
             }
+        } catch (e: IllegalStateException) {
+            "Registration failed: ${e.message}"
         }
     }
 }
