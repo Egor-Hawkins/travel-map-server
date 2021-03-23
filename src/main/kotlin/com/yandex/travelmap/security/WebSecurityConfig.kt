@@ -24,7 +24,6 @@ import org.springframework.security.core.Authentication
 import org.springframework.security.core.AuthenticationException
 import org.springframework.security.web.authentication.AuthenticationFailureHandler
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler
-import org.springframework.stereotype.Component
 import javax.servlet.http.HttpServletResponse
 
 import javax.servlet.http.HttpServletRequest
@@ -40,6 +39,9 @@ class WebSecurityConfig(
 ) : WebSecurityConfigurerAdapter() {
     @Autowired
     val config: CustomConfig? = null
+
+    @Autowired
+    val passwordEncoderConfig: PasswordEncoderConfig? = null
 
     @Bean
     fun authenticationFilter(): JWTAuthenticationFilter? {
@@ -63,14 +65,14 @@ class WebSecurityConfig(
             }
             formLogin {
                 loginProcessingUrl = "/login"
-                authenticationSuccessHandler = AuthenticationSuccessHandler() { request: HttpServletRequest,
-                                                                                response: HttpServletResponse,
-                                                                                authentication: Authentication ->
+                authenticationSuccessHandler = AuthenticationSuccessHandler { request: HttpServletRequest,
+                                                                              response: HttpServletResponse,
+                                                                              authentication: Authentication ->
                     response.status = HttpServletResponse.SC_OK
                     response.writer.println("You are logged in")
 
                 }
-                authenticationFailureHandler = AuthenticationFailureHandler() { request: HttpServletRequest?,
+                authenticationFailureHandler = AuthenticationFailureHandler { request: HttpServletRequest?,
                                                                                 response: HttpServletResponse?,
                                                                                 authenticationException: AuthenticationException? ->
                     response?.status = HttpServletResponse.SC_OK
@@ -91,7 +93,7 @@ class WebSecurityConfig(
             )
             logout {
                 logoutUrl = "/logout"
-                logoutSuccessHandler = LogoutSuccessHandler() { request: HttpServletRequest?,
+                logoutSuccessHandler = LogoutSuccessHandler { request: HttpServletRequest?,
                                                                 response: HttpServletResponse?,
                                                                 authentication: Authentication? ->
                     response?.writer?.println("You are logged out")
@@ -120,7 +122,7 @@ class WebSecurityConfig(
     }
 
     override fun configure(auth: AuthenticationManagerBuilder) {
-        auth.userDetailsService(userDetailsService).passwordEncoder(PasswordEncoderConfig().passwordEncoder())
+        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoderConfig?.passwordEncoder())
     }
 
     @Configuration

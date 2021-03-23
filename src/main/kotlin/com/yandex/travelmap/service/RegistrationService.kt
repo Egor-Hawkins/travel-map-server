@@ -12,11 +12,10 @@ class RegistrationService(
     private val emailValidator: EmailValidator
 ) {
 
-    fun register(registrationRequest: RegistrationRequest): String {
+    fun register(registrationRequest: RegistrationRequest): Boolean {
         val isEmailValid: Boolean = emailValidator.validate(registrationRequest.email)
-
         if (!isEmailValid) {
-            return "email not valid"
+            throw IllegalStateException("Email not valid")
         }
         val newAppUser = AppUser()
         newAppUser.email = registrationRequest.email

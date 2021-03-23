@@ -9,41 +9,41 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 
+
 @Service
 class UserService(
     private val userRepository: UserRepository,
     private val passwordEncoder: PasswordEncoder
 ) : UserDetailsService {
     override fun loadUserByUsername(username: String): UserDetails {
-        val user = userRepository.findByUsername(username) ?: throw UsernameNotFoundException(username)
+        val user = findByName(username)
         return User(user.username, user.password, listOf())
     }
 
-    fun registerUser(appUser: AppUser): String {
-        val emailExists = (appUser.email?.let { userRepository.findByEmail(it) } != null)
-        if (emailExists) {
-            return "User with his email already exists"
+    fun registerUser(appUser: AppUser): Boolean {
+        val emailExists = (appUser.email?.let { userRepository.findByEmail(it).isPresent })
+        if (emailExists == true) {
+            throw IllegalStateException("User with this email already exists")
         }
-        val usernameExists = (appUser.username?.let { userRepository.findByUsername(it) } != null)
-        if (usernameExists) {
-            return "User with his name already exists"
+        val usernameExists = (appUser.username?.let { userRepository.findByUsername(it).isPresent })
+        if (usernameExists == true) {
+            throw IllegalStateException("User with this name already exists")
         }
         val encodedPassword: String = passwordEncoder.encode(appUser.password)
         appUser.password = encodedPassword
         appUser.enabled = true //TODO send confirmation?
         userRepository.save(appUser)
-        return "Registered successfully"
+        return true
     }
 
-    fun findByName(username: String): AppUser? {
+    fun findByName(username: String): AppUser {
         return userRepository.findByUsername(username)
+            .orElseThrow { throw UsernameNotFoundException("No user with name $username") }
     }
 
     fun updateToken(username: String, token: String?) {
-        val appUser: AppUser? = userRepository.findByUsername(username)
-        if (appUser != null) {
-            appUser.token = token
-            userRepository.save(appUser)
-        }
+        val appUser: AppUser = findByName(username)
+        appUser.token = token
+        userRepository.save(appUser)
     }
 }

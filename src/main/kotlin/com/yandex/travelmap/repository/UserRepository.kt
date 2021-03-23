@@ -2,9 +2,10 @@ package com.yandex.travelmap.repository
 
 import com.yandex.travelmap.model.AppUser
 import org.springframework.data.jpa.repository.JpaRepository
+import java.util.*
 
 interface UserRepository : JpaRepository<AppUser, Long> {
-    fun findByUsername(username: String): AppUser?
+    fun findByUsername(username: String): Optional<AppUser>
 
-    fun findByEmail(username: String): AppUser?
+    fun findByEmail(username: String): Optional<AppUser>
 }
