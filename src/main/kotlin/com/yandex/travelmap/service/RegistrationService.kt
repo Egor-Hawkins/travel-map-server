@@ -23,5 +23,4 @@ class RegistrationService(
         newAppUser.password = registrationRequest.password
         return userService.registerUser(newAppUser)
     }
-
 }

@@ -7,7 +7,6 @@ import com.yandex.travelmap.security.jwt.AUTH_COOKIE
 import com.yandex.travelmap.security.jwt.JWTAuthenticationFilter
 import com.yandex.travelmap.security.jwt.JWTAuthorizationFilter
 import com.yandex.travelmap.service.UserService
-
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -17,19 +16,21 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.config.web.servlet.invoke
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
-import org.springframework.security.crypto.password.PasswordEncoder
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.AuthenticationException
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.authentication.AuthenticationFailureHandler
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler
-import javax.servlet.http.HttpServletResponse
-
-import javax.servlet.http.HttpServletRequest
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher
+import org.springframework.web.cors.CorsConfiguration
+import org.springframework.web.cors.CorsConfigurationSource
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 import org.springframework.web.util.WebUtils
+import javax.servlet.http.HttpServletRequest
+import javax.servlet.http.HttpServletResponse
 
 
 @Configuration
@@ -51,13 +52,18 @@ class WebSecurityConfig(
         return authenticationFilter
     }
 
+    @Bean
+    fun corsConfigurationSource(): CorsConfigurationSource? {
+        val source = UrlBasedCorsConfigurationSource()
+        source.registerCorsConfiguration("/**", CorsConfiguration().applyPermitDefaultValues())
+        return source
+    }
+
     override fun configure(http: HttpSecurity?) {
         http {
             csrf { disable() }
-            cors { disable() }
-            httpBasic {
-
-            }
+            cors { }
+            httpBasic { }
             authorizeRequests {
                 authorize("/registration", permitAll)
                 authorize("/api/auth/**", permitAll)
@@ -73,8 +79,8 @@ class WebSecurityConfig(
 
                 }
                 authenticationFailureHandler = AuthenticationFailureHandler { request: HttpServletRequest?,
-                                                                                response: HttpServletResponse?,
-                                                                                authenticationException: AuthenticationException? ->
+                                                                              response: HttpServletResponse?,
+                                                                              authenticationException: AuthenticationException? ->
                     response?.status = HttpServletResponse.SC_OK
                     response?.writer?.println("Failed to log in")
                 }
@@ -94,17 +100,15 @@ class WebSecurityConfig(
             logout {
                 logoutUrl = "/logout"
                 logoutSuccessHandler = LogoutSuccessHandler { request: HttpServletRequest?,
-                                                                response: HttpServletResponse?,
-                                                                authentication: Authentication? ->
+                                                              response: HttpServletResponse?,
+                                                              authentication: Authentication? ->
                     response?.writer?.println("You are logged out")
                     val cookie = request?.let { WebUtils.getCookie(it, AUTH_COOKIE) }
                     val jwtSecret: String by lazy {
                         System.getenv("JWT_SECRET") ?: config?.secret ?: "default_JWT_secret"
                     }
-                    println(jwtSecret)
                     if (cookie != null && cookie.value != null && cookie.value.trim().isNotEmpty()) {
                         val token = cookie.value
-                        println(token)
                         val username = JWT.require(Algorithm.HMAC512(jwtSecret))
                             .build()
                             .verify(token)
@@ -133,5 +137,3 @@ class WebSecurityConfig(
         }
     }
 }
-
-
