@@ -35,7 +35,7 @@ data class AppUser(
         joinColumns = [JoinColumn(name = "user_id")],
         inverseJoinColumns = [JoinColumn(name = "city_id")]
     )
-    val visitedCities: Set<City> = HashSet(),
+    val visitedCities: MutableSet<City> = HashSet(),
 
     @ManyToMany
     @JoinTable(
@@ -43,7 +43,7 @@ data class AppUser(
         joinColumns = [JoinColumn(name = "user_id")],
         inverseJoinColumns = [JoinColumn(name = "country_id")]
     )
-    val visitedCountries: Set<Country> = HashSet(),
+    val visitedCountries: MutableSet<Country> = HashSet(),
 ) : UserDetails {
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> = mutableListOf(
         GrantedAuthority {

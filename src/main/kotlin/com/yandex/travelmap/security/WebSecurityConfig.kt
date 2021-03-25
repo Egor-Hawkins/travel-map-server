@@ -3,7 +3,7 @@ package com.yandex.travelmap.security
 import com.yandex.travelmap.CustomConfig
 import com.yandex.travelmap.security.jwt.JWTAuthenticationFilter
 import com.yandex.travelmap.security.jwt.JWTAuthorizationFilter
-import com.yandex.travelmap.service.UserDetailsServiceImpl
+import com.yandex.travelmap.security.service.UserDetailsServiceImpl
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
