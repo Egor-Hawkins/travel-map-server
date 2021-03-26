@@ -5,23 +5,23 @@ CREATE TABLE countries (
 
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
-    email VARCHAR(100) NOT NULL UNIQUE,
-    username VARCHAR(100) NOT NULL,
-    password VARCHAR(100) NOT NULL,
+    email VARCHAR(50) NOT NULL UNIQUE,
+    username VARCHAR(50) NOT NULL,
+    password VARCHAR(50) NOT NULL,
     enabled BOOLEAN NOT NULL
 );
 
 CREATE TABLE cities (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(100),
+    name VARCHAR(80),
     country_code CHAR(2) REFERENCES countries(iso),
     latitude NUMERIC(5),
     longitude NUMERIC(5)
 );
 
 CREATE TABLE authorities (
-    username VARCHAR(100) NOT NULL,
-    authority VARCHAR(100) NOT NULL,
+    username VARCHAR(50) NOT NULL,
+    authority VARCHAR(50) NOT NULL,
     CONSTRAINT fk_authorities_users FOREIGN KEY(username) REFERENCES users(email)
 );
 

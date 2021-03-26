@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class PingController {
-    @GetMapping("/api/ping")
+    @GetMapping
     fun ping(): String {
         return "ping ok"
     }
