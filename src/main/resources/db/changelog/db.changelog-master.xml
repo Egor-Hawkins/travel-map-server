@@ -14,7 +14,8 @@
     </changeSet>
 
     <include file="/db/changelog/changes/init-tables/db.changelog-init-tables.xml"/>
+
+    <include file="/db/changelog/changes/update-user/db.changelog-update-user.xml"/>
+
     <include file="/db/changelog/changes/add-token-to-users/db.changelog-add-token-to-users.xml"/>
-
-
 </databaseChangeLog>

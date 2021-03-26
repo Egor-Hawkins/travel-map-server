@@ -17,10 +17,6 @@ class RegistrationService(
         if (!isEmailValid) {
             throw IllegalStateException("Email not valid")
         }
-        val newAppUser = AppUser()
-        newAppUser.email = registrationRequest.email
-        newAppUser.username = registrationRequest.username
-        newAppUser.password = registrationRequest.password
-        return userService.registerUser(newAppUser)
+        return userService.registerUser(registrationRequest)
     }
 }

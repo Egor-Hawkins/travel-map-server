@@ -10,6 +10,9 @@ data class Country(
     @Column(name = "iso")
     val iso: String = "",
 
-    @Column(name = "name")
-    val name: String = ""
+    @Column(name = "name", unique = true)
+    val name: String = "",
+
+    @ManyToMany(mappedBy = "visitedCountries", fetch = FetchType.LAZY)
+    val visitors: Set<AppUser> = HashSet()
 )

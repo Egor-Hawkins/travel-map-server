@@ -15,7 +15,7 @@ class RegistrationController(private val registrationService: RegistrationServic
     fun register(@RequestBody request: RegistrationRequest): String {
         return try {
             if (registrationService.register(request)) {
-                "Registered successfully"
+                "Registration successful"
             } else {
                 "Registration failed: something went wrong"
             }

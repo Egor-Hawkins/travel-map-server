@@ -6,7 +6,7 @@ import com.yandex.travelmap.CustomConfig
 import com.yandex.travelmap.security.jwt.AUTH_COOKIE
 import com.yandex.travelmap.security.jwt.JWTAuthenticationFilter
 import com.yandex.travelmap.security.jwt.JWTAuthorizationFilter
-import com.yandex.travelmap.service.UserService
+import com.yandex.travelmap.security.service.UserDetailsServiceImpl
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -36,7 +36,7 @@ import javax.servlet.http.HttpServletResponse
 @Configuration
 @EnableWebSecurity
 class WebSecurityConfig(
-    private val userDetailsService: UserService,
+    private val userDetailsService: UserDetailsServiceImpl,
 ) : WebSecurityConfigurerAdapter() {
     @Autowired
     val config: CustomConfig? = null
