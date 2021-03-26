@@ -2,6 +2,7 @@ package com.yandex.travelmap.model
 
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
+import org.springframework.transaction.annotation.Transactional
 import javax.persistence.*
 
 @Entity
@@ -28,20 +29,22 @@ data class AppUser(
     private val enabled: Boolean = true,
     @Column(name = "credentials_non_expired", nullable = false)
     private val credentialsNonExpired: Boolean = true,
+    @Column(name = "token", nullable = true)
+    private var token: String? = null,
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "city_visit",
         joinColumns = [JoinColumn(name = "user_id")],
-        inverseJoinColumns = [JoinColumn(name = "city_id")]
+        inverseJoinColumns = [JoinColumn(name = "city_id")],
     )
     val visitedCities: MutableSet<City> = HashSet(),
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "country_visit",
         joinColumns = [JoinColumn(name = "user_id")],
-        inverseJoinColumns = [JoinColumn(name = "country_id")]
+        inverseJoinColumns = [JoinColumn(name = "country_code")]
     )
     val visitedCountries: MutableSet<Country> = HashSet(),
 ) : UserDetails {
@@ -60,4 +63,10 @@ data class AppUser(
     override fun isCredentialsNonExpired(): Boolean = credentialsNonExpired
 
     override fun isEnabled(): Boolean = enabled
+
+    fun getToken(): String? = token
+    fun setToken(token: String?) {
+        this.token = token
+    }
 }
+

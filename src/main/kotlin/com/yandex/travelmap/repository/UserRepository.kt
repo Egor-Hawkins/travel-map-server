@@ -10,4 +10,6 @@ import java.util.*
 @Transactional
 interface UserRepository : JpaRepository<AppUser, Long> {
     fun findByUsername(username: String): Optional<AppUser>
+
+    fun findByEmail(username: String): Optional<AppUser>
 }
