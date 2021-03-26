@@ -1,4 +1,4 @@
-package com.yandex.travelmap.service
+package com.yandex.travelmap.security.service
 
 import com.yandex.travelmap.repository.UserRepository
 import org.springframework.security.core.userdetails.UserDetails
