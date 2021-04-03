@@ -69,7 +69,6 @@ class WebSecurityConfig(
         http {
             csrf { disable() }
             cors { }
-            httpBasic { }
             authorizeRequests {
                 authorize("/registration", permitAll)
                 authorize("/api/auth/**", permitAll)
