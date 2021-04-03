@@ -1,16 +1,14 @@
 package com.yandex.travelmap.service
 
-import com.yandex.travelmap.model.AppUser
-import com.yandex.travelmap.repository.UserRepository
-import org.springframework.security.core.userdetails.UserDetailsService
-import org.springframework.security.core.userdetails.UsernameNotFoundException
-import org.springframework.security.crypto.password.PasswordEncoder
 import com.yandex.travelmap.dto.CountryResponse
 import com.yandex.travelmap.dto.RegistrationRequest
 import com.yandex.travelmap.dto.VisitedCountryRequest
 import com.yandex.travelmap.exception.CountryNotFoundException
 import com.yandex.travelmap.exception.UserNotFoundException
+import com.yandex.travelmap.model.AppUser
 import com.yandex.travelmap.repository.CountryRepository
+import com.yandex.travelmap.repository.UserRepository
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 
 
@@ -36,6 +34,8 @@ class UserService(
                 CountryNotFoundException()
             }.let { country ->
                 user.visitedCountries.add(country)
+                country.visitors.add(user) // TODO: Maybe unnecessary
+                userRepository.save(user)
             }
         }
     }
@@ -48,6 +48,8 @@ class UserService(
                 CountryNotFoundException()
             }.let { country ->
                 user.visitedCountries.remove(country)
+                country.visitors.remove(user) // TODO: Maybe unnecessary
+                userRepository.save(user)
             }
         }
     }

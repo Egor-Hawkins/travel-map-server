@@ -3,6 +3,7 @@ package com.yandex.travelmap.security.jwt
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.yandex.travelmap.CustomConfig
+import com.yandex.travelmap.exception.UserNotFoundException
 import com.yandex.travelmap.security.service.UserDetailsServiceImpl
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -32,7 +33,13 @@ class JWTAuthorizationFilter(
         }
         val token = cookie.value
         val username = getAuthenticationToken(token)
-        val savedToken = username?.let { userService.findByName(it).getToken()}
+        val savedToken = username?.let {
+            try {
+                userService.findByName(it).getToken()
+            } catch (e: UserNotFoundException) {
+                null
+            }
+        }
         if (token == savedToken && savedToken != null) {
             SecurityContextHolder.getContext().authentication =
                 UsernamePasswordAuthenticationToken(username, null, listOf())
