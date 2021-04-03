@@ -23,6 +23,6 @@ data class City(
     @JoinColumn(name = "country_code", referencedColumnName = "iso")
     val country: Country = Country()
 
-    @ManyToMany(mappedBy = "visitedCities", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
+    @ManyToMany(mappedBy = "visitedCities", cascade = [CascadeType.ALL])
     val visitors: MutableSet<AppUser> = HashSet()
 }
