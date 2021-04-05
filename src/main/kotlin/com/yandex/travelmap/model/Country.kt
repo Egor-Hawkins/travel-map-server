@@ -13,6 +13,7 @@ data class Country(
     @Column(name = "name", unique = true)
     val name: String = "",
 
-    @ManyToMany(mappedBy = "visitedCountries", fetch = FetchType.LAZY)
-    val visitors: Set<AppUser> = HashSet()
-)
+    ) {
+    @ManyToMany(mappedBy = "visitedCountries", cascade = [CascadeType.ALL])
+    val visitors: MutableSet<AppUser> = HashSet()
+}

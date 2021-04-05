@@ -2,7 +2,6 @@ package com.yandex.travelmap.model
 
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
-import org.springframework.transaction.annotation.Transactional
 import javax.persistence.*
 
 @Entity
@@ -31,23 +30,22 @@ data class AppUser(
     private val credentialsNonExpired: Boolean = true,
     @Column(name = "token", nullable = true)
     private var token: String? = null,
-
-    @ManyToMany(fetch = FetchType.EAGER)
+) : UserDetails {
+    @ManyToMany(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     @JoinTable(
         name = "city_visit",
         joinColumns = [JoinColumn(name = "user_id")],
         inverseJoinColumns = [JoinColumn(name = "city_id")],
     )
-    val visitedCities: MutableSet<City> = HashSet(),
+    val visitedCities: MutableSet<City> = HashSet()
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     @JoinTable(
         name = "country_visit",
         joinColumns = [JoinColumn(name = "user_id")],
         inverseJoinColumns = [JoinColumn(name = "country_code")]
     )
-    val visitedCountries: MutableSet<Country> = HashSet(),
-) : UserDetails {
+    val visitedCountries: MutableSet<Country> = HashSet()
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> = mutableListOf(
         GrantedAuthority {
             "user"
@@ -67,6 +65,12 @@ data class AppUser(
     fun getToken(): String? = token
     fun setToken(token: String?) {
         this.token = token
+    }
+
+    override fun toString(): String {
+        val countryNames = visitedCountries.map { it.iso }
+        val cityNames = visitedCities.map { it.name }
+        return "AppUser(id=$id, username=$username, password=$password, visitedCountries=$countryNames,visitedCities=$cityNames"
     }
 }
 

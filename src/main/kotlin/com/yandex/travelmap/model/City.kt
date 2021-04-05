@@ -16,12 +16,13 @@ data class City(
     val latitude: Double = 0.0,
 
     @Column
-    val longitude: Double = 0.0,
+    val longitude: Double = 0.0
+) {
 
     @ManyToOne
     @JoinColumn(name = "country_code", referencedColumnName = "iso")
-    val country: Country = Country(),
+    val country: Country = Country()
 
-    @ManyToMany(mappedBy = "visitedCities", fetch = FetchType.LAZY)
-    val visitors: Set<AppUser> = HashSet()
-)
+    @ManyToMany(mappedBy = "visitedCities", cascade = [CascadeType.ALL])
+    val visitors: MutableSet<AppUser> = HashSet()
+}
