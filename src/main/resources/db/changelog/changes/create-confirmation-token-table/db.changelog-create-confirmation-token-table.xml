@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="create_confirmation_tokens_table" author="salkaevruslan">
+        <createTable tableName="confirmation_tokens">
+            <column name="id" autoIncrement="true" type="int">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="token" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="time">
+                <constraints nullable="false"/>
+            </column>
+            <column name="expires_at" type="time">
+                <constraints nullable="false"/>
+            </column>
+            <column name="confirmed_at" type="time">
+                <constraints nullable="true"/>
+            </column>
+            <column name="user_id" type="int">
+                <constraints nullable="false" foreignKeyName="fk_token_user" references="users(id)"/>
+            </column>
+        </createTable>
+
+        <rollback>
+            <dropTable tableName="confirmation_tokens"/>
+        </rollback>
+    </changeSet>
+
+
+</databaseChangeLog>

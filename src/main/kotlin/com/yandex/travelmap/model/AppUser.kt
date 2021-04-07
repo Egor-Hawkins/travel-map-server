@@ -25,7 +25,7 @@ data class AppUser(
     @Column(name = "non_locked", nullable = false)
     private val nonLocked: Boolean = true,
     @Column(nullable = false)
-    private val enabled: Boolean = true,
+    private var enabled: Boolean = true,
     @Column(name = "credentials_non_expired", nullable = false)
     private val credentialsNonExpired: Boolean = true,
     @Column(name = "token", nullable = true)
@@ -61,6 +61,9 @@ data class AppUser(
     override fun isCredentialsNonExpired(): Boolean = credentialsNonExpired
 
     override fun isEnabled(): Boolean = enabled
+    fun setEnabled(status: Boolean) {
+        this.enabled = status
+    }
 
     fun getToken(): String? = token
     fun setToken(token: String?) {
