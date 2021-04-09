@@ -1,6 +1,5 @@
 package com.yandex.travelmap.service
 
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.mail.javamail.MimeMessageHelper
 import org.springframework.scheduling.annotation.Async
@@ -20,10 +19,10 @@ class EmailService(
             helper.setText(email, true)
             helper.setTo(to)
             helper.setSubject("Confirm your email")
-            helper.setFrom("maslo@maslo.com")
+            helper.setFrom("test@test.com")
             mailSender.send(mimeMessage)
         } catch (e: MessagingException) {
-            throw IllegalStateException("failed to send email")
+            throw IllegalStateException("Failed to send email")
         }
     }
 
