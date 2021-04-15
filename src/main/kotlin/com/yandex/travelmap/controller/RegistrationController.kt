@@ -25,11 +25,11 @@ class RegistrationController(
 
     @GetMapping("/confirm")
     fun confirm(@RequestParam("token") token: String?): String? {
-        try {
+        return try {
             registrationService.confirmRegistration(token)
-            return "Registration confirmed"
+            "Registration confirmed"
         } catch (e: IllegalStateException) {
-            return "Confirmation failed: ${e.message}"
+            "Confirmation failed: ${e.message}"
         }
     }
 }
