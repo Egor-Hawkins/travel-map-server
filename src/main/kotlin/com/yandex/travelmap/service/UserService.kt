@@ -1,5 +1,6 @@
 package com.yandex.travelmap.service
 
+import com.yandex.travelmap.config.EmailConfig
 import com.yandex.travelmap.dto.CountryResponse
 import com.yandex.travelmap.dto.RegistrationRequest
 import com.yandex.travelmap.dto.VisitedCountryRequest
@@ -20,7 +21,8 @@ class UserService(
     private val userRepository: UserRepository,
     private val countryRepository: CountryRepository,
     private val passwordEncoder: PasswordEncoder,
-    private val confirmationTokenService: ConfirmationTokenService
+    private val confirmationTokenService: ConfirmationTokenService,
+    private val emailConfig: EmailConfig
 ) {
     fun getVisitedCountries(username: String): List<CountryResponse> {
         return userRepository.findByUsername(username).map {
@@ -73,7 +75,7 @@ class UserService(
             email = registrationRequest.email,
             username = registrationRequest.username,
             password = encodedPassword,
-            enabled = false
+            enabled = !emailConfig.confirmation
         )
         userRepository.save(appUser)
 
