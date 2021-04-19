@@ -26,10 +26,8 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("com.auth0:java-jwt:3.14.0")
-//	developmentOnly("org.springframework.boot:spring-boot-devtools")
     implementation("org.liquibase:liquibase-core")
     runtimeOnly("org.postgresql:postgresql")
-    runtimeOnly("com.microsoft.sqlserver:mssql-jdbc:9.2.1.jre11")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 
