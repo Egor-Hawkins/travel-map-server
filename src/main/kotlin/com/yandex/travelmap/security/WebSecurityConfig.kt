@@ -70,6 +70,7 @@ class WebSecurityConfig(
             csrf { disable() }
             cors { }
             authorizeRequests {
+                authorize("/registration/confirm", permitAll)
                 authorize("/registration", permitAll)
                 authorize("/api/auth/**", permitAll)
                 authorize("/api/**", authenticated)
