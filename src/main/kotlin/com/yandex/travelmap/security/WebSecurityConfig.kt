@@ -10,6 +10,7 @@ import com.yandex.travelmap.security.service.UserDetailsServiceImpl
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.http.HttpStatus
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
@@ -22,6 +23,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.authentication.AuthenticationFailureHandler
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler
+import org.springframework.security.web.authentication.HttpStatusEntryPoint
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher
@@ -75,6 +77,9 @@ class WebSecurityConfig(
                 authorize("/api/auth/**", permitAll)
                 authorize("/api/**", authenticated)
             }
+            exceptionHandling {
+                authenticationEntryPoint = HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)
+            }
             formLogin {
                 loginProcessingUrl = "/login"
                 authenticationSuccessHandler = AuthenticationSuccessHandler { request: HttpServletRequest,
@@ -87,7 +92,7 @@ class WebSecurityConfig(
                 authenticationFailureHandler = AuthenticationFailureHandler { request: HttpServletRequest?,
                                                                               response: HttpServletResponse?,
                                                                               authenticationException: AuthenticationException? ->
-                    response?.status = HttpServletResponse.SC_OK
+                    response?.status = HttpServletResponse.SC_UNAUTHORIZED
                     response?.writer?.println("Failed to log in")
                 }
             }
