@@ -2,34 +2,37 @@ package com.yandex.travelmap.controller
 
 import com.yandex.travelmap.dto.RegistrationRequest
 import com.yandex.travelmap.service.RegistrationService
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 
 @RestController
 @RequestMapping("/registration")
 class RegistrationController(
-    private val registrationService: RegistrationService) {
+    private val registrationService: RegistrationService
+) {
 
     @PostMapping
-    fun register(@RequestBody request: RegistrationRequest): String {
+    fun register(@RequestBody request: RegistrationRequest): ResponseEntity<String> {
         return try {
             if (registrationService.register(request)) {
-                "Registration successful"
+                ResponseEntity("Registration successful", HttpStatus.OK)
             } else {
-                "Registration failed: something went wrong"
+                ResponseEntity( "Registration failed: something went wrong", HttpStatus.INTERNAL_SERVER_ERROR)
             }
         } catch (e: IllegalStateException) {
-            "Registration failed: ${e.message}"
+            ResponseEntity( "Registration failed: ${e.message}", HttpStatus.CONFLICT)
         }
     }
 
     @GetMapping("/confirm")
-    fun confirm(@RequestParam("token") token: String?): String? {
+    fun confirm(@RequestParam("token") token: String?): ResponseEntity<String> {
         return try {
             registrationService.confirmRegistration(token)
-            "Registration confirmed"
+            ResponseEntity("Registration confirmed", HttpStatus.OK)
         } catch (e: IllegalStateException) {
-            "Confirmation failed: ${e.message}"
+            ResponseEntity("Confirmation failed: ${e.message}", HttpStatus.CONFLICT)
         }
     }
 }
