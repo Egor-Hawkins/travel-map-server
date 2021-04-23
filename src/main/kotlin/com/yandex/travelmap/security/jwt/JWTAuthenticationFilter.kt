@@ -21,8 +21,7 @@ class JWTAuthenticationFilter(
     authenticationManager: AuthenticationManager,
     private val config: JWTConfig?,
     private val userService: UserDetailsServiceImpl
-) :
-    UsernamePasswordAuthenticationFilter(authenticationManager) {
+) : UsernamePasswordAuthenticationFilter(authenticationManager) {
     private val jwtSecret: String by lazy {
         System.getenv("JWT_SECRET") ?: config?.secret ?: "default_JWT_secret"
     }
@@ -34,8 +33,8 @@ class JWTAuthenticationFilter(
         chain: FilterChain,
         authResult: Authentication?
     ) {
-        val user =
-            authResult?.principal as? AppUser ?: throw IllegalArgumentException("authResult must be an instance of User")
+        val user = authResult?.principal as? AppUser
+            ?: throw IllegalArgumentException("authResult must be an instance of User")
         val token = JWT.create()
             .withSubject(user.username)
             .withExpiresAt(Date(System.currentTimeMillis() + expirationTime))

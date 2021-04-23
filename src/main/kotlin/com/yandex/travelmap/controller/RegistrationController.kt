@@ -1,17 +1,16 @@
 package com.yandex.travelmap.controller
 
 import com.yandex.travelmap.dto.RegistrationRequest
-import org.springframework.web.bind.annotation.RestController
 import com.yandex.travelmap.service.RegistrationService
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.PostMapping
-import java.lang.IllegalStateException
+import org.springframework.web.bind.annotation.*
 
 
 @RestController
-class RegistrationController(private val registrationService: RegistrationService) {
+@RequestMapping("/registration")
+class RegistrationController(
+    private val registrationService: RegistrationService) {
 
-    @PostMapping("/registration")
+    @PostMapping
     fun register(@RequestBody request: RegistrationRequest): String {
         return try {
             if (registrationService.register(request)) {
@@ -21,6 +20,16 @@ class RegistrationController(private val registrationService: RegistrationServic
             }
         } catch (e: IllegalStateException) {
             "Registration failed: ${e.message}"
+        }
+    }
+
+    @GetMapping("/confirm")
+    fun confirm(@RequestParam("token") token: String?): String? {
+        return try {
+            registrationService.confirmRegistration(token)
+            "Registration confirmed"
+        } catch (e: IllegalStateException) {
+            "Confirmation failed: ${e.message}"
         }
     }
 }
