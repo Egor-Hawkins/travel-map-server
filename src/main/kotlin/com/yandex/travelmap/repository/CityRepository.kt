@@ -10,4 +10,6 @@ import java.util.*
 @Transactional
 interface CityRepository : JpaRepository<City, Long> {
     fun findByNameIgnoreCaseAndCountryIso(name: String, country_code: String): Optional<City>
+
+    fun findByCountryIso(iso: String): List<City>
 }

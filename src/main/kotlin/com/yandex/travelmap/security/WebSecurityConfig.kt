@@ -75,6 +75,7 @@ class WebSecurityConfig(
                 authorize("/registration/confirm", permitAll)
                 authorize("/registration", permitAll)
                 authorize("/api/auth/**", permitAll)
+                authorize("/api/cities", permitAll)
                 authorize("/api/**", authenticated)
             }
             exceptionHandling {
