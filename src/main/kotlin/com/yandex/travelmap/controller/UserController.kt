@@ -1,7 +1,6 @@
 package com.yandex.travelmap.controller
 
-import com.yandex.travelmap.dto.CountryResponse
-import com.yandex.travelmap.dto.VisitedCountryRequest
+import com.yandex.travelmap.dto.*
 import com.yandex.travelmap.exception.NotAuthorizedException
 import com.yandex.travelmap.service.UserService
 import org.springframework.security.core.context.SecurityContextHolder
@@ -29,5 +28,20 @@ class UserController(private val userService: UserService) {
     @DeleteMapping("/visited_countries")
     fun deleteVisitedCountry(@RequestBody request: VisitedCountryRequest) {
         return userService.deleteVisitedCountry(getCurrentUsername(), request)
+    }
+
+    @PostMapping("/visited_cities")
+    fun getVisitedCities(@RequestBody request: VisitedCitiesListRequest): List<CityResponse> {
+        return userService.getVisitedCities(getCurrentUsername(), request)
+    }
+
+    @PutMapping("/visited_cities")
+    fun addVisitedCities(@RequestBody request: VisitedCityRequest) {
+        return userService.addVisitedCity(getCurrentUsername(), request)
+    }
+
+    @DeleteMapping("/visited_cities")
+    fun deleteVisitedCities(@RequestBody request: VisitedCityRequest) {
+        return userService.deleteVisitedCity(getCurrentUsername(), request)
     }
 }

@@ -1,13 +1,13 @@
 package com.yandex.travelmap.service
 
 import com.yandex.travelmap.config.EmailConfig
-import com.yandex.travelmap.dto.CountryResponse
-import com.yandex.travelmap.dto.RegistrationRequest
-import com.yandex.travelmap.dto.VisitedCountryRequest
+import com.yandex.travelmap.dto.*
+import com.yandex.travelmap.exception.CityNotFoundException
 import com.yandex.travelmap.exception.CountryNotFoundException
 import com.yandex.travelmap.exception.UserNotFoundException
 import com.yandex.travelmap.model.AppUser
 import com.yandex.travelmap.model.ConfirmationToken
+import com.yandex.travelmap.repository.CityRepository
 import com.yandex.travelmap.repository.CountryRepository
 import com.yandex.travelmap.repository.UserRepository
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -20,6 +20,7 @@ import java.util.*
 class UserService(
     private val userRepository: UserRepository,
     private val countryRepository: CountryRepository,
+    private val cityRepository: CityRepository,
     private val passwordEncoder: PasswordEncoder,
     private val confirmationTokenService: ConfirmationTokenService,
     private val emailConfig: EmailConfig
@@ -46,15 +47,52 @@ class UserService(
         }
     }
 
-    fun deleteVisitedCountry(username: String, countryResponse: VisitedCountryRequest) {
+    fun deleteVisitedCountry(username: String, countryRequest: VisitedCountryRequest) {
         return userRepository.findByUsername(username).orElseThrow {
             UserNotFoundException("Wrong user id")
         }.let { user ->
-            countryRepository.findByIso(countryResponse.iso).orElseThrow {
+            countryRepository.findByIso(countryRequest.iso).orElseThrow {
                 CountryNotFoundException()
             }.let { country ->
                 user.visitedCountries.remove(country)
                 country.visitors.remove(user) // TODO: Maybe unnecessary
+                userRepository.save(user)
+            }
+        }
+    }
+
+    fun getVisitedCities(username: String, request: VisitedCitiesListRequest): List<CityResponse> {
+        return userRepository.findByUsername(username).map {
+            it.visitedCities.map { city -> CityResponse(city.country.iso, city.name) }
+                .filter { response -> (request.iso == "" || request.iso == response.iso) }
+        }.orElseThrow {
+            UserNotFoundException("Wrong user id")
+        }
+    }
+
+    fun addVisitedCity(username: String, cityRequest: VisitedCityRequest) {
+        return userRepository.findByUsername(username).orElseThrow {
+            UserNotFoundException("Wrong user id")
+        }.let { user ->
+            cityRepository.findByNameIgnoreCaseAndCountryIso(cityRequest.name, cityRequest.iso).orElseThrow {
+                CityNotFoundException()
+            }.let { city ->
+                user.visitedCities.add(city)
+                city.visitors.add(user) // TODO: Maybe unnecessary
+                userRepository.save(user)
+            }
+        }
+    }
+
+    fun deleteVisitedCity(username: String, cityRequest: VisitedCityRequest) {
+        return userRepository.findByUsername(username).orElseThrow {
+            UserNotFoundException("Wrong user id")
+        }.let { user ->
+            cityRepository.findByNameIgnoreCaseAndCountryIso(cityRequest.name, cityRequest.iso).orElseThrow {
+                CityNotFoundException()
+            }.let { city ->
+                user.visitedCities.remove(city)
+                city.visitors.remove(user) // TODO: Maybe unnecessary
                 userRepository.save(user)
             }
         }

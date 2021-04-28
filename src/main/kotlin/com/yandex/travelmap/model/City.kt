@@ -11,12 +11,6 @@ data class City(
 
     @Column
     val name: String = "",
-
-    @Column
-    val latitude: Double = 0.0,
-
-    @Column
-    val longitude: Double = 0.0
 ) {
 
     @ManyToOne
