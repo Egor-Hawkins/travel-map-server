@@ -2,7 +2,7 @@ package com.yandex.travelmap.security.jwt
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
-import com.yandex.travelmap.CustomConfig
+import com.yandex.travelmap.config.JWTConfig
 import com.yandex.travelmap.exception.UserNotFoundException
 import com.yandex.travelmap.security.service.UserDetailsServiceImpl
 import org.springframework.security.authentication.AuthenticationManager
@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletResponse
 
 class JWTAuthorizationFilter(
     authenticationManager: AuthenticationManager,
-    private val config: CustomConfig?,
+    private val config: JWTConfig?,
     private val userService: UserDetailsServiceImpl
 ) :
     BasicAuthenticationFilter(authenticationManager) {

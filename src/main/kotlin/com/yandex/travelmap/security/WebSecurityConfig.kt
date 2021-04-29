@@ -2,7 +2,7 @@ package com.yandex.travelmap.security
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
-import com.yandex.travelmap.CustomConfig
+import com.yandex.travelmap.config.JWTConfig
 import com.yandex.travelmap.security.jwt.AUTH_COOKIE
 import com.yandex.travelmap.security.jwt.JWTAuthenticationFilter
 import com.yandex.travelmap.security.jwt.JWTAuthorizationFilter
@@ -41,7 +41,7 @@ class WebSecurityConfig(
     private val userDetailsService: UserDetailsServiceImpl,
 ) : WebSecurityConfigurerAdapter() {
     @Autowired
-    val config: CustomConfig? = null
+    val config: JWTConfig? = null
 
     @Autowired
     val passwordEncoderConfig: PasswordEncoderConfig? = null
