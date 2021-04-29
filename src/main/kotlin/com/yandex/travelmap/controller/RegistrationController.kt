@@ -19,10 +19,10 @@ class RegistrationController(
             if (registrationService.register(request)) {
                 ResponseEntity("Registration successful", HttpStatus.OK)
             } else {
-                ResponseEntity( "Registration failed: something went wrong", HttpStatus.INTERNAL_SERVER_ERROR)
+                ResponseEntity("Registration failed: something went wrong", HttpStatus.INTERNAL_SERVER_ERROR)
             }
         } catch (e: IllegalStateException) {
-            ResponseEntity( "Registration failed: ${e.message}", HttpStatus.CONFLICT)
+            ResponseEntity("Registration failed: ${e.message}", HttpStatus.CONFLICT)
         }
     }
 
