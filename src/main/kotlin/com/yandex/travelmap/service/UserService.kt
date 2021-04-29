@@ -61,10 +61,10 @@ class UserService(
         }
     }
 
-    fun getVisitedCities(username: String, requestByCountry: CitiesByCountryListRequest): List<CityResponse> {
+    fun getVisitedCities(username: String, cityRequest: CitiesByCountryListRequest): List<CityResponse> {
         return userRepository.findByUsername(username).map {
             it.visitedCities.map { city -> CityResponse(city.country.iso, city.name) }
-                .filter { response -> (requestByCountry.iso == "" || requestByCountry.iso == response.iso) }
+                .filter { response -> (cityRequest.iso == "" || cityRequest.iso == response.iso) }
         }.orElseThrow {
             UserNotFoundException("Wrong user id")
         }
