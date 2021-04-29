@@ -41,7 +41,7 @@ class UserService(
                 CountryNotFoundException()
             }.let { country ->
                 user.visitedCountries.add(country)
-                country.visitors.add(user) // TODO: Maybe unnecessary
+                country.visitors.add(user)
                 userRepository.save(user)
             }
         }
@@ -55,16 +55,16 @@ class UserService(
                 CountryNotFoundException()
             }.let { country ->
                 user.visitedCountries.remove(country)
-                country.visitors.remove(user) // TODO: Maybe unnecessary
+                country.visitors.remove(user)
                 userRepository.save(user)
             }
         }
     }
 
-    fun getVisitedCities(username: String, request: VisitedCitiesListRequest): List<CityResponse> {
+    fun getVisitedCities(username: String, requestByCountry: VisitedCitiesByCountryListRequest): List<CityResponse> {
         return userRepository.findByUsername(username).map {
             it.visitedCities.map { city -> CityResponse(city.country.iso, city.name) }
-                .filter { response -> (request.iso == "" || request.iso == response.iso) }
+                .filter { response -> (requestByCountry.iso == "" || requestByCountry.iso == response.iso) }
         }.orElseThrow {
             UserNotFoundException("Wrong user id")
         }
@@ -78,7 +78,7 @@ class UserService(
                 CityNotFoundException()
             }.let { city ->
                 user.visitedCities.add(city)
-                city.visitors.add(user) // TODO: Maybe unnecessary
+                city.visitors.add(user)
                 userRepository.save(user)
             }
         }
@@ -92,7 +92,7 @@ class UserService(
                 CityNotFoundException()
             }.let { city ->
                 user.visitedCities.remove(city)
-                city.visitors.remove(user) // TODO: Maybe unnecessary
+                city.visitors.remove(user)
                 userRepository.save(user)
             }
         }
