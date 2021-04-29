@@ -61,7 +61,7 @@ class UserService(
         }
     }
 
-    fun getVisitedCities(username: String, requestByCountry: VisitedCitiesByCountryListRequest): List<CityResponse> {
+    fun getVisitedCities(username: String, requestByCountry: CitiesByCountryListRequest): List<CityResponse> {
         return userRepository.findByUsername(username).map {
             it.visitedCities.map { city -> CityResponse(city.country.iso, city.name) }
                 .filter { response -> (requestByCountry.iso == "" || requestByCountry.iso == response.iso) }

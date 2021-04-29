@@ -30,8 +30,8 @@ class UserController(private val userService: UserService) {
         return userService.deleteVisitedCountry(getCurrentUsername(), request)
     }
 
-    @PostMapping("/visited_cities")
-    fun getVisitedCities(@RequestBody request: VisitedCitiesByCountryListRequest): List<CityResponse> {
+    @GetMapping("/visited_cities")
+    fun getVisitedCities(@RequestBody request: CitiesByCountryListRequest): List<CityResponse> {
         return userService.getVisitedCities(getCurrentUsername(), request)
     }
 
