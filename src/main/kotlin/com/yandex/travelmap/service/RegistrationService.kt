@@ -2,6 +2,7 @@ package com.yandex.travelmap.service
 
 import com.yandex.travelmap.config.EmailConfig
 import com.yandex.travelmap.dto.RegistrationRequest
+import com.yandex.travelmap.exception.EmailNotValidException
 import com.yandex.travelmap.util.EmailValidator
 import com.yandex.travelmap.util.MailBuilder
 import org.springframework.stereotype.Service
@@ -22,7 +23,7 @@ class RegistrationService(
     fun register(registrationRequest: RegistrationRequest): Boolean {
         val isEmailValid: Boolean = emailValidator.validate(registrationRequest.email)
         if (!isEmailValid) {
-            throw IllegalStateException("Email not valid")
+            throw EmailNotValidException()
         }
         val token = userService.registerUser(registrationRequest) ?: return false
         val link = "http://localhost:8080/registration/confirm?token=$token" //TODO change address
