@@ -72,6 +72,7 @@ class WebSecurityConfig(
             authorizeRequests {
                 authorize("/registration/confirm", permitAll)
                 authorize("/registration", permitAll)
+                authorize("/health", permitAll)
                 authorize("/api/auth/**", permitAll)
                 authorize("/api/**", authenticated)
             }
