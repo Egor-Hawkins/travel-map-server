@@ -9,4 +9,9 @@ class PingController {
     fun ping(): String {
         return "ping ok"
     }
+
+    @GetMapping("/health")
+    fun health(): String {
+        return "I am health!"
+    }
 }
