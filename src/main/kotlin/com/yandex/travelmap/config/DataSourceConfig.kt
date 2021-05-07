@@ -9,7 +9,7 @@ import javax.sql.DataSource
 class DataSourceConfig {
     @Bean
     fun getDataSource(): DataSource {
-        val connectionUrl = System.getenv("JAVA_DATABASE_URL")
+        val connectionUrl = System.getenv("JDBC_DATABASE_URL")
         val dataSourceBuilder = DataSourceBuilder.create()
         if (connectionUrl != null) {
             dataSourceBuilder.url(connectionUrl)
