@@ -61,7 +61,7 @@ class WebSecurityConfig(
         configuration.allowedOrigins = listOf(origin)
         configuration.allowedMethods = listOf("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
         configuration.allowedHeaders = listOf("authorization", "content-type", "x-auth-token")
-        configuration.exposedHeaders = listOf("x-auth-token")
+        configuration.exposedHeaders = listOf("x-auth-token", "set-cookie")
         configuration.allowCredentials = true
         val source = UrlBasedCorsConfigurationSource()
         source.registerCorsConfiguration("/**", configuration)
