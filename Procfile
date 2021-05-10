@@ -1,2 +1,2 @@
 web: java -Dserver.port=$PORT $JAVA_OPTS -jar build/libs/travel-map-0.0.1-SNAPSHOT.jar
-release: ./gradlew -Dliquibase.change-log=src/main/resources/db/changelog/db.changelog-master.xml -Dliquibase.url=$JDBC_DATABASE_URL update
+release: ./gradlew --no-daemon -S -Dliquibase.change-log=src/main/resources/db/changelog/db.changelog-master.xml -Dliquibase.url=$JDBC_DATABASE_URL update
