@@ -5,6 +5,7 @@ import com.auth0.jwt.algorithms.Algorithm
 import com.yandex.travelmap.config.JWTConfig
 import com.yandex.travelmap.model.AppUser
 import com.yandex.travelmap.security.service.UserDetailsServiceImpl
+import org.springframework.http.HttpHeaders
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.core.Authentication
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
@@ -43,6 +44,8 @@ class JWTAuthenticationFilter(
         val cookie = Cookie(AUTH_COOKIE, token)
         cookie.comment = "SameSite=None"
         response.addCookie(cookie)
+        val header = response.getHeader(HttpHeaders.SET_COOKIE)
+        response.setHeader(HttpHeaders.SET_COOKIE, String.format("%s; %s", header, "SameSite=None"))
         chain.doFilter(request, response)
     }
 }
