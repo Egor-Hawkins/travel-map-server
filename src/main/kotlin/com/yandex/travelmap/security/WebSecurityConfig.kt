@@ -104,7 +104,7 @@ class WebSecurityConfig(
                     it
                 )
             }
-            addFilterBefore<JWTAuthorizationFilter>(
+            addFilterBefore<JWTAuthenticationFilter>(
                 JWTAuthorizationFilter(
                     authenticationManager(),
                     config,
