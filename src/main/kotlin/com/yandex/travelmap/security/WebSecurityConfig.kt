@@ -70,7 +70,7 @@ class WebSecurityConfig(
     override fun configure(http: HttpSecurity?) {
         http {
             csrf { disable() }
-            cors { }
+            cors { disable() }
             authorizeRequests {
                 authorize("/registration/confirm", permitAll)
                 authorize("/registration", permitAll)
