@@ -40,7 +40,9 @@ class JWTAuthenticationFilter(
             .withExpiresAt(Date(System.currentTimeMillis() + expirationTime))
             .sign(Algorithm.HMAC512(jwtSecret))
         userService.updateToken(user.username, token)
-        response.addCookie(Cookie(AUTH_COOKIE, token))
+        val cookie = Cookie(AUTH_COOKIE, token)
+        cookie.comment = "SameSite=None"
+        response.addCookie(cookie)
         chain.doFilter(request, response)
     }
 }
