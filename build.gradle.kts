@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     id("org.springframework.boot") version "2.4.3"
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
-    id("org.liquibase.gradle") version "2.0.4"
+//    id("org.liquibase.gradle") version "2.0.4"
     kotlin("jvm") version "1.4.30"
     kotlin("plugin.spring") version "1.4.30"
 }
@@ -43,4 +43,20 @@ tasks.withType<KotlinCompile> {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+tasks.create("copyToLib", Copy::class.java) {
+    into("$buildDir/libs")
+    from(configurations.runtimeClasspath) {
+        include {
+            it.name.startsWith("liquibase") || it.name.startsWith("snakeyaml") || it.name.startsWith("postgresql")
+        }
+        rename {
+            it.substringBeforeLast('-') + ".jar"
+        }
+    }
+
+}
+tasks.build {
+    dependsOn("copyToLib")
 }
