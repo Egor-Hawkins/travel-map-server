@@ -24,4 +24,6 @@
     <include file="db/changelog/changes/add-cities-data/db.changelog-add-cities-data.xml"/>
 
     <include file="db/changelog/changes/update-countries-data/db.changelog-update-countries-data.xml"/>
+
+    <include file="db/changelog/changes/add-friends/db.changelog-add-friends-table.xml"/>
 </databaseChangeLog>
