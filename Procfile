@@ -1,2 +1,2 @@
 web: java -Dserver.port=$PORT $JAVA_OPTS -jar build/libs/travel-map-0.0.1-SNAPSHOT.jar
-release: java -jar /build/libs/liquibase-core.jar --changeLogFile=src/main/resources/db/changelog/db.changelog-master.xml --url=$JDBC_DATABASE_URL --classpath=build/libs/postgres.jar update
+release: ./gradlew --no-daemon -S -Dliquibase.change-log="src/main/resources/db/changelog/db.changelog-master.xml" -Dliquibase.url="$JDBC_DATABASE_URL" update
