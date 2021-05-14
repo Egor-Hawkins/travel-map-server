@@ -48,9 +48,9 @@ tasks.withType<Test> {
 tasks.create("copyToLib", Copy::class.java) {
     into("$buildDir/libs")
     from(configurations.runtimeClasspath) {
-        include {
-            it.name.startsWith("liquibase") || it.name.startsWith("snakeyaml") || it.name.startsWith("postgresql")
-        }
+//        include {
+//            it.name.startsWith("liquibase") || it.name.startsWith("snakeyaml") || it.name.startsWith("postgresql")
+//        }
         rename {
             it.substringBeforeLast('-') + ".jar"
         }
