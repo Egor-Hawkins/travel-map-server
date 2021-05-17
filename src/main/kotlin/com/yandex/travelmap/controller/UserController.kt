@@ -15,6 +15,11 @@ class UserController(private val userService: UserService) {
             ?: throw NotAuthorizedException()
     }
 
+    @GetMapping("/stats")
+    fun getStats(): UserStatsResponse {
+        return userService.getUserStats(getCurrentUsername())
+    }
+
     @GetMapping("/visited_countries")
     fun getVisitedCountries(): List<CountryResponse> {
         return userService.getVisitedCountries(getCurrentUsername())
@@ -80,8 +85,18 @@ class UserController(private val userService: UserService) {
         return userService.getFriendsList(getCurrentUsername())
     }
 
-    @PostMapping("/friends")
-    fun getFriendData(@RequestBody request: FriendRequest): List<CountryResponse> { // TODO more info (cities, his info, friends, etc)
-        return userService.getFriendData(getCurrentUsername(), request.friendName)
+    @PostMapping("/friends/countries")
+    fun getFriendCountries(@RequestBody request: FriendRequest): List<CountryResponse> {
+        return userService.getFriendCountries(getCurrentUsername(), request.friendName)
+    }
+
+    @PostMapping("/friends/cities")
+    fun getFriendCities(@RequestBody request: FriendCitiesRequest): List<CityResponse> {
+        return userService.getFriendCities(getCurrentUsername(), request.friendName, request.iso)
+    }
+
+    @PostMapping("/friends/stats")
+    fun getFriendStats(@RequestBody request: FriendRequest): UserStatsResponse {
+        return userService.getFriendStats(getCurrentUsername(), request.friendName)
     }
 }
