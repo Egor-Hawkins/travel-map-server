@@ -30,7 +30,7 @@ class UserController(private val userService: UserService) {
         return userService.deleteVisitedCountry(getCurrentUsername(), request)
     }
 
-    @GetMapping("/visited_cities")
+    @PostMapping("/visited_cities")
     fun getVisitedCities(@RequestBody request: CitiesByCountryListRequest): List<CityResponse> {
         return userService.getVisitedCities(getCurrentUsername(), request)
     }
@@ -50,7 +50,7 @@ class UserController(private val userService: UserService) {
         return userService.removeFriend(getCurrentUsername(), request.friendName)
     }
 
-    @GetMapping("/friends/request")
+    @PostMapping("/friends/request")
     fun getRequestsList(@RequestBody request: FriendRequestsRequest): List<String> {
         return userService.getRequestsList(getCurrentUsername(), request.myRequests)
     }
