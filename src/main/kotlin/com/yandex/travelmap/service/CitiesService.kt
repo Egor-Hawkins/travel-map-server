@@ -11,6 +11,8 @@ class CitiesService(
 ) {
 
     fun getCitiesByCountry(iso: String): List<CityResponse> {
-        return cityRepository.findByCountryIso(iso).map { city -> CityResponse(iso, city.name) }
+        return cityRepository.findByCountryIso(iso)
+            .map { city -> CityResponse(iso, city.name) }
+            .sortedBy { response -> response.name }
     }
 }

@@ -68,6 +68,7 @@ class UserService(
         return userRepository.findByUsername(username).map {
             it.visitedCities.map { city -> CityResponse(city.country.iso, city.name) }
                 .filter { response -> (cityRequest.iso == "" || cityRequest.iso == response.iso) }
+                .sortedBy { response -> response.name }
         }.orElseThrow {
             UserNotFoundException("Wrong user id")
         }
