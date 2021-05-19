@@ -296,6 +296,7 @@ class UserService(
                 response.citiesStats.add(
                     CitiesStatistic(
                         iso = country.iso,
+                        name= country.name,
                         citiesNumber = citiesNumber
                     )
                 )

@@ -7,4 +7,4 @@ data class UserStatsResponse(
     val citiesStats: MutableList<CitiesStatistic>
 )
 
-data class CitiesStatistic(val iso: String, val citiesNumber: Int)
+data class CitiesStatistic(val iso: String, val name: String, val citiesNumber: Int)
