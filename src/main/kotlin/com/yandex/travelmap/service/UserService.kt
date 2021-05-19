@@ -291,16 +291,17 @@ class UserService(
                 totalCitiesNumber = cities.size,
                 citiesStats = LinkedList()
             )
-            countryRepository.findAll().forEach { country ->
-                val citiesNumber = cities.filter { city -> city.country == country }.toList().size
-                response.citiesStats.add(
-                    CitiesStatistic(
-                        iso = country.iso,
-                        name= country.name,
-                        citiesNumber = citiesNumber
+            countryRepository.findAll().filter { country -> user.visitedCountries.contains(country) }
+                .forEach { country ->
+                    val citiesNumber = cities.filter { city -> city.country == country }.toList().size
+                    response.citiesStats.add(
+                        CitiesStatistic(
+                            iso = country.iso,
+                            name = country.name,
+                            citiesNumber = citiesNumber
+                        )
                     )
-                )
-            }
+                }
             return response
         }
     }
