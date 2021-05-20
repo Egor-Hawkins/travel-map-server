@@ -13,17 +13,17 @@
         <tagDatabase tag="db_init"/>
     </changeSet>
 
-    <include file="src/main/resources/db/changelog/changes/init-tables/db.changelog-init-tables.xml"/>
+    <include file="classpath:/db/changelog/changes/init-tables/db.changelog-init-tables.xml"/>
 
-    <include file="src/main/resources/db/changelog/changes/update-user/db.changelog-update-user.xml"/>
+    <include file="classpath:/db/changelog/changes/update-user/db.changelog-update-user.xml"/>
 
-    <include file="src/main/resources/db/changelog/changes/add-token-to-users/db.changelog-add-token-to-users.xml"/>
+    <include file="classpath:/db/changelog/changes/add-token-to-users/db.changelog-add-token-to-users.xml"/>
 
-    <include file="src/main/resources/db/changelog/changes/create-confirmation-token-table/db.changelog-create-confirmation-token-table.xml"/>
+    <include file="classpath:db/changelog/changes/create-confirmation-token-table/db.changelog-create-confirmation-token-table.xml"/>
 
-    <include file="src/main/resources/db/changelog/changes/add-cities-data/db.changelog-add-cities-data.xml"/>
+    <include file="classpath:/db/changelog/changes/add-cities-data/db.changelog-add-cities-data.xml"/>
 
-    <include file="src/main/resources/db/changelog/changes/update-countries-data/db.changelog-update-countries-data.xml"/>
+    <include file="classpath:/db/changelog/changes/update-countries-data/db.changelog-update-countries-data.xml"/>
 
-    <include file="src/main/resources/db/changelog/changes/add-friends/db.changelog-add-friends-table.xml"/>
+    <include file="classpath:/db/changelog/changes/add-friends/db.changelog-add-friends-table.xml"/>
 </databaseChangeLog>

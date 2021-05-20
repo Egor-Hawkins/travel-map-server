@@ -1,0 +1,4 @@
+#!/bin/bash
+cp src/main/resources/db/changelog/db.changelog-master.xml src/main/resources/db/changelog/db.changelog-deploy.xml
+sed -i 's/classpath:/src\/main\/resources/' src/main/resources/db/changelog/db.changelog-deploy.xml
+java -jar target/dependency/liquibase.jar --changeLogFile=src/main/resources/db/changelog/db.changelog-master.xml --url=$JDBC_DATABASE_URL --classpath=target/dependency/postgres.jar update
