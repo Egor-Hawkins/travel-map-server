@@ -15,6 +15,11 @@ class UserController(private val userService: UserService) {
             ?: throw NotAuthorizedException()
     }
 
+    @GetMapping("/stats")
+    fun getStats(): UserStatsResponse {
+        return userService.getUserStats(getCurrentUsername())
+    }
+
     @GetMapping("/visited_countries")
     fun getVisitedCountries(): List<CountryResponse> {
         return userService.getVisitedCountries(getCurrentUsername())
@@ -30,7 +35,7 @@ class UserController(private val userService: UserService) {
         return userService.deleteVisitedCountry(getCurrentUsername(), request)
     }
 
-    @GetMapping("/visited_cities")
+    @PostMapping("/visited_cities")
     fun getVisitedCities(@RequestBody request: CitiesByCountryListRequest): List<CityResponse> {
         return userService.getVisitedCities(getCurrentUsername(), request)
     }
@@ -43,5 +48,55 @@ class UserController(private val userService: UserService) {
     @DeleteMapping("/visited_cities")
     fun deleteVisitedCities(@RequestBody request: VisitedCityRequest) {
         return userService.deleteVisitedCity(getCurrentUsername(), request)
+    }
+
+    @PostMapping("/friends/remove")
+    fun removeFromFriends(@RequestBody request: FriendRequest) {
+        return userService.removeFriend(getCurrentUsername(), request.friendName)
+    }
+
+    @PostMapping("/friends/request")
+    fun getRequestsList(@RequestBody request: FriendRequestsRequest): List<String> {
+        return userService.getRequestsList(getCurrentUsername(), request.myRequests)
+    }
+
+    @PostMapping("/friends/request/send")
+    fun sendFriendRequest(@RequestBody request: FriendRequest) {
+        return userService.sendFriendRequest(getCurrentUsername(), request.friendName)
+    }
+
+    @PostMapping("/friends/request/cancel")
+    fun cancelFriendRequest(@RequestBody request: FriendRequest) {
+        return userService.cancelFriendRequest(getCurrentUsername(), request.friendName)
+    }
+
+    @PostMapping("/friends/request/accept")
+    fun acceptFriendRequest(@RequestBody request: FriendRequest) {
+        return userService.processFriendRequest(getCurrentUsername(), request.friendName, isAccept = true)
+    }
+
+    @PostMapping("/friends/request/decline")
+    fun declineFriendRequest(@RequestBody request: FriendRequest) {
+        return userService.processFriendRequest(getCurrentUsername(), request.friendName, isAccept = false)
+    }
+
+    @GetMapping("/friends")
+    fun getFriendsList(): List<String> {
+        return userService.getFriendsList(getCurrentUsername())
+    }
+
+    @PostMapping("/friends/countries")
+    fun getFriendCountries(@RequestBody request: FriendRequest): List<CountryResponse> {
+        return userService.getFriendCountries(getCurrentUsername(), request.friendName)
+    }
+
+    @PostMapping("/friends/cities")
+    fun getFriendCities(@RequestBody request: FriendCitiesRequest): List<CityResponse> {
+        return userService.getFriendCities(getCurrentUsername(), request.friendName, request.iso)
+    }
+
+    @PostMapping("/friends/stats")
+    fun getFriendStats(@RequestBody request: FriendRequest): UserStatsResponse {
+        return userService.getFriendStats(getCurrentUsername(), request.friendName)
     }
 }

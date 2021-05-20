@@ -46,6 +46,31 @@ data class AppUser(
         inverseJoinColumns = [JoinColumn(name = "country_code")]
     )
     val visitedCountries: MutableSet<Country> = HashSet()
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
+    @JoinTable(
+        name = "friends",
+        joinColumns = [JoinColumn(name = "first_user_id")],
+        inverseJoinColumns = [JoinColumn(name = "second_user_id")]
+    )
+    val friendsList: MutableSet<AppUser> = HashSet()
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
+    @JoinTable(
+        name = "requests",
+        joinColumns = [JoinColumn(name = "first_user_id")],
+        inverseJoinColumns = [JoinColumn(name = "second_user_id")]
+    )
+    val myRequestsList: MutableSet<AppUser> = HashSet()
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
+    @JoinTable(
+        name = "requests",
+        joinColumns = [JoinColumn(name = "second_user_id")],
+        inverseJoinColumns = [JoinColumn(name = "first_user_id")]
+    )
+    val requestsToMeList: MutableSet<AppUser> = HashSet()
+
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> = mutableListOf(
         GrantedAuthority {
             "user"
