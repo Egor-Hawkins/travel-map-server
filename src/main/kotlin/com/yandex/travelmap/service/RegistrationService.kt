@@ -27,7 +27,7 @@ class RegistrationService(
         }
         val token = userService.registerUser(registrationRequest) ?: return false
         val link = "http://localhost:8080/registration/confirm?token=$token" //TODO change address
-        if(emailConfig.confirmation) {
+        if (emailConfig.confirmation) {
             emailService.send(
                 registrationRequest.email,
                 mailBuilder.buildEmail(link)
@@ -44,12 +44,12 @@ class RegistrationService(
         val confirmationToken = confirmationTokenService.getToken(token)
             .orElseThrow { IllegalStateException("Token not found") }
         if (confirmationToken.confirmedAt != null) {
-            throw IllegalStateException("Email already confirmed");
+            throw IllegalStateException("Email already confirmed")
         }
         println(confirmationToken.expiresAt)
         println(LocalDateTime.now())
         if (!confirmationToken.expiresAt.isBefore(LocalDateTime.now())) {
-            throw IllegalStateException("Token expired");
+            throw IllegalStateException("Token expired")
         }
         confirmationTokenService.confirm(confirmationToken)
         confirmationToken.appUser?.username?.let { userService.enableAppUser(it) }
