@@ -163,16 +163,20 @@ class UserService(
         val friend = userRepository.findByUsername(friendName).orElseThrow {
             UserNotFoundException("Wrong username")
         }
+        if (user.username == friend.username) {
+            throw WrongUserRelationException("Can't send friend request to self")
+        }
         if (user.friendsList.contains(friend)) {
             throw WrongUserRelationException("User is already a friend")
         }
         if (user.myRequestsList.contains(friend)) {
             throw WrongUserRelationException("Request already sent")
         }
-        if (user.requestsToMeList.contains(friend)) { //TODO maybe other behavior?
+        if (user.requestsToMeList.contains(friend)) {
             processFriendRequest(username, friendName, isAccept = true)
+        } else {
+            user.myRequestsList.add(friend)
         }
-        user.myRequestsList.add(friend)
         userRepository.save(user)
         userRepository.save(friend)
     }
