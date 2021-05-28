@@ -64,10 +64,10 @@ class UserService(
         }
     }
 
-    fun getVisitedCities(username: String, cityRequest: CitiesByCountryListRequest): List<CityResponse> {
+    fun getVisitedCities(username: String, iso: String): List<CityResponse> {
         return userRepository.findByUsername(username).map {
             it.visitedCities.map { city -> CityResponse(city.country.iso, city.name) }
-                .filter { response -> (cityRequest.iso == "" || cityRequest.iso == response.iso) }
+                .filter { response -> (iso == "" || iso == response.iso) }
                 .sortedBy { response -> response.name }
         }.orElseThrow {
             UserNotFoundException("No user with name $username exists")
@@ -256,6 +256,12 @@ class UserService(
         }
     }
 
+    fun getFriendCommonCountries(username: String, friendName: String): List<CountryResponse> {
+        val friendsCountries = getFriendCountries(username, friendName)
+        val myCountries = getVisitedCountries(username)
+        return myCountries.filter { countryResponse -> friendsCountries.contains(countryResponse) }
+    }
+
     fun getFriendCities(username: String, friendName: String, iso: String): List<CityResponse> {
         val user = userRepository.findByUsername(username).orElseThrow {
             UserNotFoundException("No user with name $username exists")
@@ -264,10 +270,16 @@ class UserService(
             UserNotFoundException("No user with name $friendName exists")
         }
         if (user.friendsList.contains(friend)) {
-            return getVisitedCities(friendName, CitiesByCountryListRequest(iso))
+            return getVisitedCities(friendName, iso)
         } else {
             throw WrongUserRelationException("User $friendName is not your friend")
         }
+    }
+
+    fun getFriendCommonCities(username: String, friendName: String, iso: String): List<CityResponse> {
+        val friendsCities = getFriendCities(username, friendName, iso)
+        val myCities = getVisitedCities(username, iso)
+        return myCities.filter { countryResponse -> friendsCities.contains(countryResponse) }
     }
 
     fun getFriendStats(username: String, friendName: String): UserStatsResponse {
@@ -278,7 +290,10 @@ class UserService(
             UserNotFoundException("No user with name $friendName exists")
         }
         if (user.friendsList.contains(friend)) {
-            return getUserStats(friendName)
+            val statsResponse = getUserStats(friendName)
+            statsResponse.totalCommonCities = getFriendCommonCities(username, friendName, "").size
+            statsResponse.commonCountries = getFriendCommonCountries(username, friendName).size
+            return statsResponse
         } else {
             throw WrongUserRelationException("User $friendName is not your friend")
         }
@@ -293,7 +308,9 @@ class UserService(
                 username = username,
                 countriesNumber = user.visitedCountries.size,
                 totalCitiesNumber = cities.size,
-                citiesStats = LinkedList()
+                citiesStats = LinkedList(),
+                totalCommonCities = 0,
+                commonCountries = 0
             )
             countryRepository.findAll().filter { country -> user.visitedCountries.contains(country) }
                 .forEach { country ->

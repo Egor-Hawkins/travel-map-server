@@ -40,7 +40,7 @@ class UserController(private val userService: UserService) {
 
     @PostMapping("/visited_cities")
     fun getVisitedCities(@RequestBody request: CitiesByCountryListRequest): List<CityResponse> {
-        return userService.getVisitedCities(getCurrentUsername(), request)
+        return userService.getVisitedCities(getCurrentUsername(), request.iso)
     }
 
     @PutMapping("/visited_cities")
@@ -98,9 +98,19 @@ class UserController(private val userService: UserService) {
         return userService.getFriendCountries(getCurrentUsername(), request.friendName)
     }
 
+    @PostMapping("/friends/countries/common")
+    fun getFriendCommonCountries(@RequestBody request: FriendRequest): List<CountryResponse> {
+        return userService.getFriendCommonCountries(getCurrentUsername(), request.friendName)
+    }
+
     @PostMapping("/friends/cities")
     fun getFriendCities(@RequestBody request: FriendCitiesRequest): List<CityResponse> {
         return userService.getFriendCities(getCurrentUsername(), request.friendName, request.iso)
+    }
+
+    @PostMapping("/friends/cities/common")
+    fun getFriendCommonCountries(@RequestBody request: FriendCitiesRequest): List<CityResponse> {
+        return userService.getFriendCommonCities(getCurrentUsername(), request.friendName, request.iso)
     }
 
     @PostMapping("/friends/stats")

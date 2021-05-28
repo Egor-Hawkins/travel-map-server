@@ -4,6 +4,8 @@ data class UserStatsResponse(
     val username: String,
     val countriesNumber: Int,
     val totalCitiesNumber: Int,
+    var commonCountries: Int,
+    var totalCommonCities: Int,
     val citiesStats: MutableList<CitiesStatistic>
 )
 
