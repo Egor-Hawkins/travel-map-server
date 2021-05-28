@@ -279,7 +279,7 @@ class UserService(
     fun getFriendCommonCities(username: String, friendName: String, iso: String): List<CityResponse> {
         val friendsCities = getFriendCities(username, friendName, iso)
         val myCities = getVisitedCities(username, iso)
-        return myCities.filter { countryResponse -> friendsCities.contains(countryResponse) }
+        return myCities.filter { cityResponse -> friendsCities.contains(cityResponse) }
     }
 
     fun getFriendStats(username: String, friendName: String): UserStatsResponse {
