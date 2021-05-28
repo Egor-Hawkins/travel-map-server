@@ -3,8 +3,11 @@ package com.yandex.travelmap.controller
 import com.yandex.travelmap.dto.*
 import com.yandex.travelmap.exception.NotAuthorizedException
 import com.yandex.travelmap.service.UserService
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.server.ResponseStatusException
 
 @RestController
 @RequestMapping("/api/user")
@@ -61,8 +64,13 @@ class UserController(private val userService: UserService) {
     }
 
     @PostMapping("/friends/request/send")
-    fun sendFriendRequest(@RequestBody request: FriendRequest) {
-        return userService.sendFriendRequest(getCurrentUsername(), request.friendName)
+    fun sendFriendRequest(@RequestBody request: FriendRequest): ResponseEntity<Any> {
+        return try {
+            userService.sendFriendRequest(getCurrentUsername(), request.friendName)
+            ResponseEntity(HttpStatus.OK)
+        } catch (e: ResponseStatusException) {
+            ResponseEntity(e.reason, e.status)
+        }
     }
 
     @PostMapping("/friends/request/cancel")
