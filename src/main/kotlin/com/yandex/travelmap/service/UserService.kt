@@ -30,13 +30,13 @@ class UserService(
         return userRepository.findByUsername(username).map {
             it.visitedCountries.map { country -> CountryResponse(country.iso, country.name) }
         }.orElseThrow {
-            UserNotFoundException("Wrong user id")
+            UserNotFoundException("No user with name $username exists")
         }
     }
 
     fun addVisitedCountry(username: String, countryRequest: VisitedCountryRequest) {
         return userRepository.findByUsername(username).orElseThrow {
-            UserNotFoundException("Wrong user id")
+            UserNotFoundException("No user with name $username exists")
         }.let { user ->
             countryRepository.findByIso(countryRequest.iso).orElseThrow {
                 CountryNotFoundException()
@@ -51,7 +51,7 @@ class UserService(
 
     fun deleteVisitedCountry(username: String, countryRequest: VisitedCountryRequest) {
         return userRepository.findByUsername(username).orElseThrow {
-            UserNotFoundException("Wrong user id")
+            UserNotFoundException("No user with name $username exists")
         }.let { user ->
             countryRepository.findByIso(countryRequest.iso).orElseThrow {
                 CountryNotFoundException()
@@ -64,19 +64,19 @@ class UserService(
         }
     }
 
-    fun getVisitedCities(username: String, cityRequest: CitiesByCountryListRequest): List<CityResponse> {
+    fun getVisitedCities(username: String, iso: String): List<CityResponse> {
         return userRepository.findByUsername(username).map {
             it.visitedCities.map { city -> CityResponse(city.country.iso, city.name) }
-                .filter { response -> (cityRequest.iso == "" || cityRequest.iso == response.iso) }
+                .filter { response -> (iso == "" || iso == response.iso) }
                 .sortedBy { response -> response.name }
         }.orElseThrow {
-            UserNotFoundException("Wrong user id")
+            UserNotFoundException("No user with name $username exists")
         }
     }
 
     fun addVisitedCity(username: String, cityRequest: VisitedCityRequest) {
         return userRepository.findByUsername(username).orElseThrow {
-            UserNotFoundException("Wrong user id")
+            UserNotFoundException("No user with name $username exists")
         }.let { user ->
             cityRepository.findByNameIgnoreCaseAndCountryIso(cityRequest.name, cityRequest.iso).orElseThrow {
                 CityNotFoundException()
@@ -91,7 +91,7 @@ class UserService(
 
     fun deleteVisitedCity(username: String, cityRequest: VisitedCityRequest) {
         return userRepository.findByUsername(username).orElseThrow {
-            UserNotFoundException("Wrong user id")
+            UserNotFoundException("No user with name $username exists")
         }.let { user ->
             cityRepository.findByNameIgnoreCaseAndCountryIso(cityRequest.name, cityRequest.iso).orElseThrow {
                 CityNotFoundException()
@@ -140,7 +140,7 @@ class UserService(
             it.isEnabled = true
             userRepository.save(it)
         }.orElseThrow {
-            UserNotFoundException("Wrong username")
+            UserNotFoundException("No user with name $username exists")
         }
     }
 
@@ -152,16 +152,16 @@ class UserService(
                 user.requestsToMeList.map { it.username }
             }
         }.orElseThrow {
-            UserNotFoundException("Wrong user id")
+            UserNotFoundException("No user with name $username exists")
         }
     }
 
     fun sendFriendRequest(username: String, friendName: String) {
         val user = userRepository.findByUsername(username).orElseThrow {
-            UserNotFoundException("Wrong username")
+            UserNotFoundException("No user with name $username exists")
         }
         val friend = userRepository.findByUsername(friendName).orElseThrow {
-            UserNotFoundException("Wrong username")
+            UserNotFoundException("No user with name $friendName exists")
         }
         if (user.username == friend.username) {
             throw WrongUserRelationException("Can't send friend request to self")
@@ -183,26 +183,26 @@ class UserService(
 
     fun cancelFriendRequest(username: String, friendName: String) {
         val user = userRepository.findByUsername(username).orElseThrow {
-            UserNotFoundException("Wrong username")
+            UserNotFoundException("No user with name $username exists")
         }
         val friend = userRepository.findByUsername(friendName).orElseThrow {
-            UserNotFoundException("Wrong username")
+            UserNotFoundException("No user with name $friendName exists")
         }
         if (user.myRequestsList.contains(friend)) {
             user.myRequestsList.remove(friend)
             userRepository.save(user)
             userRepository.save(friend)
         } else {
-            throw WrongUserRelationException("No request to user $friendName")
+            throw WrongUserRelationException("No requests to user $friendName")
         }
     }
 
     fun processFriendRequest(username: String, friendName: String, isAccept: Boolean) {
         val user = userRepository.findByUsername(username).orElseThrow {
-            UserNotFoundException("Wrong username")
+            UserNotFoundException("No user with name $username exists")
         }
         val friend = userRepository.findByUsername(friendName).orElseThrow {
-            UserNotFoundException("Wrong username")
+            UserNotFoundException("No user with name $friendName exists")
         }
         if (user.requestsToMeList.contains(friend)) {
             user.requestsToMeList.remove(friend)
@@ -213,16 +213,16 @@ class UserService(
             userRepository.save(user)
             userRepository.save(friend)
         } else {
-            throw WrongUserRelationException("No request from user $friendName")
+            throw WrongUserRelationException("No requests from user $friendName")
         }
     }
 
     fun removeFriend(username: String, friendName: String) {
         val user = userRepository.findByUsername(username).orElseThrow {
-            UserNotFoundException("Wrong username")
+            UserNotFoundException("No user with name $username exists")
         }
         val friend = userRepository.findByUsername(friendName).orElseThrow {
-            UserNotFoundException("Wrong username")
+            UserNotFoundException("No user with name $friendName exists")
         }
         if (user.friendsList.contains(friend)) {
             user.friendsList.remove(friend)
@@ -230,7 +230,7 @@ class UserService(
             userRepository.save(user)
             userRepository.save(friend)
         } else {
-            throw WrongUserRelationException("$friendName is not your friend")
+            throw WrongUserRelationException("User $friendName is not your friend")
         }
     }
 
@@ -238,16 +238,16 @@ class UserService(
         return userRepository.findByUsername(username).map {
             it.friendsList.map { friend -> friend.username }.toList()
         }.orElseThrow {
-            UserNotFoundException("Wrong username")
+            UserNotFoundException("No user with name $username exists")
         }
     }
 
     fun getFriendCountries(username: String, friendName: String): List<CountryResponse> {
         val user = userRepository.findByUsername(username).orElseThrow {
-            UserNotFoundException("Wrong username")
+            UserNotFoundException("No user with name $username exists")
         }
         val friend = userRepository.findByUsername(friendName).orElseThrow {
-            UserNotFoundException("Wrong username")
+            UserNotFoundException("No user with name $friendName exists")
         }
         if (user.friendsList.contains(friend)) {
             return getVisitedCountries(friendName)
@@ -256,29 +256,44 @@ class UserService(
         }
     }
 
+    fun getFriendCommonCountries(username: String, friendName: String): List<CountryResponse> {
+        val friendsCountries = getFriendCountries(username, friendName)
+        val myCountries = getVisitedCountries(username)
+        return myCountries.filter { countryResponse -> friendsCountries.contains(countryResponse) }
+    }
+
     fun getFriendCities(username: String, friendName: String, iso: String): List<CityResponse> {
         val user = userRepository.findByUsername(username).orElseThrow {
-            UserNotFoundException("Wrong username")
+            UserNotFoundException("No user with name $username exists")
         }
         val friend = userRepository.findByUsername(friendName).orElseThrow {
-            UserNotFoundException("Wrong username")
+            UserNotFoundException("No user with name $friendName exists")
         }
         if (user.friendsList.contains(friend)) {
-            return getVisitedCities(friendName, CitiesByCountryListRequest(iso))
+            return getVisitedCities(friendName, iso)
         } else {
             throw WrongUserRelationException("User $friendName is not your friend")
         }
     }
 
+    fun getFriendCommonCities(username: String, friendName: String, iso: String): List<CityResponse> {
+        val friendsCities = getFriendCities(username, friendName, iso)
+        val myCities = getVisitedCities(username, iso)
+        return myCities.filter { cityResponse -> friendsCities.contains(cityResponse) }
+    }
+
     fun getFriendStats(username: String, friendName: String): UserStatsResponse {
         val user = userRepository.findByUsername(username).orElseThrow {
-            UserNotFoundException("Wrong username")
+            UserNotFoundException("No user with name $username exists")
         }
         val friend = userRepository.findByUsername(friendName).orElseThrow {
-            UserNotFoundException("Wrong username")
+            UserNotFoundException("No user with name $friendName exists")
         }
         if (user.friendsList.contains(friend)) {
-            return getUserStats(friendName)
+            val statsResponse = getUserStats(friendName)
+            statsResponse.totalCommonCities = getFriendCommonCities(username, friendName, "").size
+            statsResponse.commonCountries = getFriendCommonCountries(username, friendName).size
+            return statsResponse
         } else {
             throw WrongUserRelationException("User $friendName is not your friend")
         }
@@ -286,14 +301,16 @@ class UserService(
 
     fun getUserStats(username: String): UserStatsResponse {
         userRepository.findByUsername(username).orElseThrow {
-            UserNotFoundException("Wrong user id")
+            UserNotFoundException("No user with name $username exists")
         }.let { user ->
             val cities = user.visitedCities
             val response = UserStatsResponse(
                 username = username,
                 countriesNumber = user.visitedCountries.size,
                 totalCitiesNumber = cities.size,
-                citiesStats = LinkedList()
+                citiesStats = LinkedList(),
+                totalCommonCities = 0,
+                commonCountries = 0
             )
             countryRepository.findAll().filter { country -> user.visitedCountries.contains(country) }
                 .forEach { country ->

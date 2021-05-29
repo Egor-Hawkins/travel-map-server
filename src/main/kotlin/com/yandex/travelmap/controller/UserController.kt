@@ -3,8 +3,11 @@ package com.yandex.travelmap.controller
 import com.yandex.travelmap.dto.*
 import com.yandex.travelmap.exception.NotAuthorizedException
 import com.yandex.travelmap.service.UserService
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.server.ResponseStatusException
 
 @RestController
 @RequestMapping("/api/user")
@@ -37,7 +40,7 @@ class UserController(private val userService: UserService) {
 
     @PostMapping("/visited_cities")
     fun getVisitedCities(@RequestBody request: CitiesByCountryListRequest): List<CityResponse> {
-        return userService.getVisitedCities(getCurrentUsername(), request)
+        return userService.getVisitedCities(getCurrentUsername(), request.iso)
     }
 
     @PutMapping("/visited_cities")
@@ -61,8 +64,13 @@ class UserController(private val userService: UserService) {
     }
 
     @PostMapping("/friends/request/send")
-    fun sendFriendRequest(@RequestBody request: FriendRequest) {
-        return userService.sendFriendRequest(getCurrentUsername(), request.friendName)
+    fun sendFriendRequest(@RequestBody request: FriendRequest): ResponseEntity<Any> {
+        return try {
+            userService.sendFriendRequest(getCurrentUsername(), request.friendName)
+            ResponseEntity(HttpStatus.OK)
+        } catch (e: ResponseStatusException) {
+            ResponseEntity(e.reason, e.status)
+        }
     }
 
     @PostMapping("/friends/request/cancel")
@@ -90,9 +98,19 @@ class UserController(private val userService: UserService) {
         return userService.getFriendCountries(getCurrentUsername(), request.friendName)
     }
 
+    @PostMapping("/friends/countries/common")
+    fun getFriendCommonCountries(@RequestBody request: FriendRequest): List<CountryResponse> {
+        return userService.getFriendCommonCountries(getCurrentUsername(), request.friendName)
+    }
+
     @PostMapping("/friends/cities")
     fun getFriendCities(@RequestBody request: FriendCitiesRequest): List<CityResponse> {
         return userService.getFriendCities(getCurrentUsername(), request.friendName, request.iso)
+    }
+
+    @PostMapping("/friends/cities/common")
+    fun getFriendCommonCountries(@RequestBody request: FriendCitiesRequest): List<CityResponse> {
+        return userService.getFriendCommonCities(getCurrentUsername(), request.friendName, request.iso)
     }
 
     @PostMapping("/friends/stats")
