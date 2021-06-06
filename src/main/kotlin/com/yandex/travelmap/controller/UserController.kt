@@ -54,8 +54,13 @@ class UserController(private val userService: UserService) {
     }
 
     @PostMapping("/friends/remove")
-    fun removeFromFriends(@RequestBody request: FriendRequest) {
-        return userService.removeFriend(getCurrentUsername(), request.friendName)
+    fun removeFromFriends(@RequestBody request: FriendRequest): ResponseEntity<Any> {
+        return try {
+            userService.removeFriend(getCurrentUsername(), request.friendName)
+            ResponseEntity(HttpStatus.OK)
+        } catch (e: ResponseStatusException) {
+            ResponseEntity(e.reason, e.status)
+        }
     }
 
     @PostMapping("/friends/request")
@@ -74,18 +79,33 @@ class UserController(private val userService: UserService) {
     }
 
     @PostMapping("/friends/request/cancel")
-    fun cancelFriendRequest(@RequestBody request: FriendRequest) {
-        return userService.cancelFriendRequest(getCurrentUsername(), request.friendName)
+    fun cancelFriendRequest(@RequestBody request: FriendRequest): ResponseEntity<Any> {
+        return try {
+            userService.cancelFriendRequest(getCurrentUsername(), request.friendName)
+            ResponseEntity(HttpStatus.OK)
+        } catch (e: ResponseStatusException) {
+            ResponseEntity(e.reason, e.status)
+        }
     }
 
     @PostMapping("/friends/request/accept")
-    fun acceptFriendRequest(@RequestBody request: FriendRequest) {
-        return userService.processFriendRequest(getCurrentUsername(), request.friendName, isAccept = true)
+    fun acceptFriendRequest(@RequestBody request: FriendRequest): ResponseEntity<Any> {
+        return try {
+            userService.processFriendRequest(getCurrentUsername(), request.friendName, isAccept = true)
+            ResponseEntity(HttpStatus.OK)
+        } catch (e: ResponseStatusException) {
+            ResponseEntity(e.reason, e.status)
+        }
     }
 
     @PostMapping("/friends/request/decline")
-    fun declineFriendRequest(@RequestBody request: FriendRequest) {
-        return userService.processFriendRequest(getCurrentUsername(), request.friendName, isAccept = false)
+    fun declineFriendRequest(@RequestBody request: FriendRequest): ResponseEntity<Any> {
+        return try {
+            userService.processFriendRequest(getCurrentUsername(), request.friendName, isAccept = false)
+            ResponseEntity(HttpStatus.OK)
+        } catch (e: ResponseStatusException) {
+            ResponseEntity(e.reason, e.status)
+        }
     }
 
     @GetMapping("/friends")
@@ -94,27 +114,62 @@ class UserController(private val userService: UserService) {
     }
 
     @PostMapping("/friends/countries")
-    fun getFriendCountries(@RequestBody request: FriendRequest): List<CountryResponse> {
-        return userService.getFriendCountries(getCurrentUsername(), request.friendName)
+    fun getFriendCountries(@RequestBody request: FriendRequest): ResponseEntity<Any> {
+        return try {
+            ResponseEntity(
+                userService.getFriendCountries(getCurrentUsername(), request.friendName),
+                HttpStatus.OK
+            )
+        } catch (e: ResponseStatusException) {
+            ResponseEntity(e.reason, e.status)
+        }
     }
 
     @PostMapping("/friends/countries/common")
-    fun getFriendCommonCountries(@RequestBody request: FriendRequest): List<CountryResponse> {
-        return userService.getFriendCommonCountries(getCurrentUsername(), request.friendName)
+    fun getFriendCommonCountries(@RequestBody request: FriendRequest): ResponseEntity<Any> {
+        return try {
+            ResponseEntity(
+                userService.getFriendCommonCountries(getCurrentUsername(), request.friendName),
+                HttpStatus.OK
+            )
+        } catch (e: ResponseStatusException) {
+            ResponseEntity(e.reason, e.status)
+        }
     }
 
     @PostMapping("/friends/cities")
-    fun getFriendCities(@RequestBody request: FriendCitiesRequest): List<CityResponse> {
-        return userService.getFriendCities(getCurrentUsername(), request.friendName, request.iso)
+    fun getFriendCities(@RequestBody request: FriendCitiesRequest): ResponseEntity<Any> {
+        return try {
+            ResponseEntity(
+                userService.getFriendCities(getCurrentUsername(), request.friendName, request.iso),
+                HttpStatus.OK
+            )
+        } catch (e: ResponseStatusException) {
+            ResponseEntity(e.reason, e.status)
+        }
     }
 
     @PostMapping("/friends/cities/common")
-    fun getFriendCommonCountries(@RequestBody request: FriendCitiesRequest): List<CityResponse> {
-        return userService.getFriendCommonCities(getCurrentUsername(), request.friendName, request.iso)
+    fun getFriendCommonCities(@RequestBody request: FriendCitiesRequest): ResponseEntity<Any> {
+        return try {
+            ResponseEntity(
+                userService.getFriendCommonCities(getCurrentUsername(), request.friendName, request.iso),
+                HttpStatus.OK
+            )
+        } catch (e: ResponseStatusException) {
+            ResponseEntity(e.reason, e.status)
+        }
     }
 
     @PostMapping("/friends/stats")
-    fun getFriendStats(@RequestBody request: FriendRequest): UserStatsResponse {
-        return userService.getFriendStats(getCurrentUsername(), request.friendName)
+    fun getFriendStats(@RequestBody request: FriendRequest): ResponseEntity<Any> {
+        return try {
+            ResponseEntity(
+                userService.getFriendStats(getCurrentUsername(), request.friendName),
+                HttpStatus.OK
+            )
+        } catch (e: ResponseStatusException) {
+            ResponseEntity(e.reason, e.status)
+        }
     }
 }
