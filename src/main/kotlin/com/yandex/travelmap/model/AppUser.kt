@@ -49,6 +49,14 @@ data class AppUser(
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     @JoinTable(
+        name = "desired_country",
+        joinColumns = [JoinColumn(name = "user_id")],
+        inverseJoinColumns = [JoinColumn(name = "country_code")]
+    )
+    val desiredCountries: MutableSet<Country> = HashSet()
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
+    @JoinTable(
         name = "friends",
         joinColumns = [JoinColumn(name = "first_user_id")],
         inverseJoinColumns = [JoinColumn(name = "second_user_id")]
