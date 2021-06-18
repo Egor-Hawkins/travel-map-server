@@ -132,7 +132,7 @@ class UserController(private val userService: UserService) {
     fun getFriendCountries(@RequestBody request: FriendRequest): ResponseEntity<Any> {
         return try {
             ResponseEntity(
-                userService.getFriendCountries(getCurrentUsername(), request.friendName),
+                userService.getFriendCountries(getCurrentUsername(), request.friendName, false),
                 HttpStatus.OK
             )
         } catch (e: ResponseStatusException) {
