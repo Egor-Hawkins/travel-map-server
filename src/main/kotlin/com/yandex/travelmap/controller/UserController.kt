@@ -140,6 +140,18 @@ class UserController(private val userService: UserService) {
         }
     }
 
+    @PostMapping("/friends/countries/desired")
+    fun getFriendDesiredCountries(@RequestBody request: FriendRequest): ResponseEntity<Any> {
+        return try {
+            ResponseEntity(
+                userService.getFriendCountries(getCurrentUsername(), request.friendName, true),
+                HttpStatus.OK
+            )
+        } catch (e: ResponseStatusException) {
+            ResponseEntity(e.reason, e.status)
+        }
+    }
+
     @PostMapping("/friends/countries/common")
     fun getFriendCommonCountries(@RequestBody request: FriendRequest): ResponseEntity<Any> {
         return try {
