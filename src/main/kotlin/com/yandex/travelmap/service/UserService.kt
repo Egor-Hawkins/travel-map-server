@@ -26,38 +26,56 @@ class UserService(
     private val confirmationTokenService: ConfirmationTokenService,
     private val emailConfig: EmailConfig
 ) {
-    fun getVisitedCountries(username: String): List<CountryResponse> {
+    fun getVisitedCountries(username: String, isDesire: Boolean): List<CountryResponse> {
         return userRepository.findByUsername(username).map {
-            it.visitedCountries.map { country -> CountryResponse(country.iso, country.name) }
+            if (isDesire) {
+                it.desiredCountries.map { country -> CountryResponse(country.iso, country.name) }
+            } else {
+                it.visitedCountries.map { country -> CountryResponse(country.iso, country.name) }
+            }
         }.orElseThrow {
             UserNotFoundException("No user with name $username exists")
         }
     }
 
-    fun addVisitedCountry(username: String, countryRequest: VisitedCountryRequest) {
+    fun addVisitedCountry(username: String, countryRequest: VisitedCountryRequest, isDesire: Boolean) {
         return userRepository.findByUsername(username).orElseThrow {
             UserNotFoundException("No user with name $username exists")
         }.let { user ->
             countryRepository.findByIso(countryRequest.iso).orElseThrow {
                 CountryNotFoundException()
             }.let { country ->
-                user.visitedCountries.add(country)
-                country.visitors.add(user)
+                if (isDesire) {
+                    user.desiredCountries.add(country)
+                    country.desireers.add(user)
+                } else {
+                    user.visitedCountries.add(country)
+                    country.visitors.add(user)
+                    if (user.desiredCountries.contains(country)) {
+                        user.desiredCountries.remove(country)
+                        country.desireers.remove(user)
+                    }
+                }
                 userRepository.save(user)
                 countryRepository.save(country)
             }
         }
     }
 
-    fun deleteVisitedCountry(username: String, countryRequest: VisitedCountryRequest) {
+    fun deleteVisitedCountry(username: String, countryRequest: VisitedCountryRequest, isDesire: Boolean) {
         return userRepository.findByUsername(username).orElseThrow {
             UserNotFoundException("No user with name $username exists")
         }.let { user ->
             countryRepository.findByIso(countryRequest.iso).orElseThrow {
                 CountryNotFoundException()
             }.let { country ->
-                user.visitedCountries.remove(country)
-                country.visitors.remove(user)
+                if (isDesire) {
+                    user.desiredCountries.remove(country)
+                    country.desireers.remove(user)
+                } else {
+                    user.visitedCountries.remove(country)
+                    country.visitors.remove(user)
+                }
                 userRepository.save(user)
                 countryRepository.save(country)
             }
@@ -242,7 +260,7 @@ class UserService(
         }
     }
 
-    fun getFriendCountries(username: String, friendName: String): List<CountryResponse> {
+    fun getFriendCountries(username: String, friendName: String, isDesire: Boolean): List<CountryResponse> {
         val user = userRepository.findByUsername(username).orElseThrow {
             UserNotFoundException("No user with name $username exists")
         }
@@ -250,15 +268,15 @@ class UserService(
             UserNotFoundException("No user with name $friendName exists")
         }
         if (user.friendsList.contains(friend)) {
-            return getVisitedCountries(friendName)
+            return getVisitedCountries(friendName, isDesire)
         } else {
             throw WrongUserRelationException("User $friendName is not your friend")
         }
     }
 
-    fun getFriendCommonCountries(username: String, friendName: String): List<CountryResponse> {
-        val friendsCountries = getFriendCountries(username, friendName)
-        val myCountries = getVisitedCountries(username)
+    fun getFriendCommonCountries(username: String, friendName: String, isDesire: Boolean): List<CountryResponse> {
+        val friendsCountries = getFriendCountries(username, friendName, isDesire)
+        val myCountries = getVisitedCountries(username, isDesire)
         return myCountries.filter { countryResponse -> friendsCountries.contains(countryResponse) }
     }
 
@@ -292,7 +310,7 @@ class UserService(
         if (user.friendsList.contains(friend)) {
             val statsResponse = getUserStats(friendName)
             statsResponse.totalCommonCities = getFriendCommonCities(username, friendName, "").size
-            statsResponse.commonCountries = getFriendCommonCountries(username, friendName).size
+            statsResponse.commonCountries = getFriendCommonCountries(username, friendName, isDesire = false).size
             return statsResponse
         } else {
             throw WrongUserRelationException("User $friendName is not your friend")
