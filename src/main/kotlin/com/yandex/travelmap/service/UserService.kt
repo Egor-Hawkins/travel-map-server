@@ -51,6 +51,10 @@ class UserService(
                 } else {
                     user.visitedCountries.add(country)
                     country.visitors.add(user)
+                    if (user.desiredCountries.contains(country)) {
+                        user.desiredCountries.remove(country)
+                        country.desireers.remove(user)
+                    }
                 }
                 userRepository.save(user)
                 countryRepository.save(country)
@@ -65,8 +69,13 @@ class UserService(
             countryRepository.findByIso(countryRequest.iso).orElseThrow {
                 CountryNotFoundException()
             }.let { country ->
-                user.visitedCountries.remove(country)
-                country.visitors.remove(user)
+                if (isDesire) {
+                    user.desiredCountries.remove(country)
+                    country.desireers.remove(user)
+                } else {
+                    user.visitedCountries.remove(country)
+                    country.visitors.remove(user)
+                }
                 userRepository.save(user)
                 countryRepository.save(country)
             }
